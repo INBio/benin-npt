@@ -1,0 +1,20 @@
+package = INBio 
+project = Nodes Portal Toolkit
+
+name = Darwin Core
+description =  Add a content-type to store Darwin Core format. <a href="https://github.com/INBio/npt-inbio/wiki/##">See documentation</a>.
+
+core = 7.x
+
+dependencies[] = "node"
+dependencies[] = "taxonomy"
+dependencies[] = "node_reference"
+dependencies[] = "scratchpads_taxonomic_name_field"
+
+stylesheets[all][] = css/pliniancore.css
+
+files[] = "darwincore.info"
+files[] = "darwincore.install"
+files[] = "darwincore.module"
+
+features[field][] = "node-darwincore-field_taxonomic_name"

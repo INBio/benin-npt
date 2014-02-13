@@ -1,0 +1,7 @@
+<?php
+/**
+ * @file
+ * Code for the Feeds Darwin Core feature.
+ */
+
+include_once('dwca_feeds.features.inc');

@@ -1,0 +1,21 @@
+package = INBio 
+project = Nodes Portal Toolkit
+
+name = Plinian Core
+description =  Add a content-type to store Species description in Plinian Core format. <a href="https://github.com/INBio/npt-inbio/wiki/Plinian-Core">See documentation</a>.
+
+core = 7.x
+
+dependencies[] = "node"
+dependencies[] = "taxonomy"
+dependencies[] = "node_reference"
+dependencies[] = "scratchpads_taxonomic_name_field"
+
+stylesheets[all][] = css/pliniancore.css
+
+files[] = "pliniancore.info"
+files[] = "pliniancore.install"
+files[] = "pliniancore.module"
+files[] = "templates/pliniancore_full_view.tpl.php"
+
+features[field][] = "node-pliniancore-field_taxonomic_name"

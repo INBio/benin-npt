@@ -1,0 +1,909 @@
+<?php
+
+/**
+ * @file
+ * pliniancore.module
+ *
+ * Implement the hooks to create a new content type.
+ */
+
+/**
+ * Implementation of hook_views_api
+ */
+function pliniancore_views_api(){
+	$path = drupal_get_path('module', 'pliniancore');
+	return array(
+		'api' => '3',
+        'path' => $path,
+        'template path' => $path . '/templates'	
+	);
+}
+
+/**
+ * Implements hook_node_info().
+ *
+ * To define the name and the machine name of the new content-type.
+ */
+function pliniancore_node_info() {
+  $items = array(
+    'pliniancore' => array(
+      'name' => t('Plinian Core'),
+      'base' => 'pliniancore',
+      'description' => t('Plinian core 2.3 based species records'),
+      'has_title' => '1',
+      'title_label' => t('Title'),
+      'help' => '',
+    ),
+  );
+  return $items;
+}
+
+/**
+ * Implement hook_insert from the node.api
+ *
+ * To overrite the default insert procedure and put it directly in the pliniancore table.
+ */
+function pliniancore_insert ($node){ 
+
+	
+  $result = db_insert('pliniancore')->fields(array(
+    'nid' => $node->nid,
+    'institution_code' => $node->institution_code,
+    'date_last_modified' => $node->date_last_modified,
+    'taxon_record_id' => $node->taxon_record_id,
+    'taxon_record_language' => $node->taxon_record_language,
+    'creators' => is_array($node->creators)?$node->creators['value']:$node->creators,
+    'distribution' => is_array($node->distribution)?$node->distribution['value']:$node->distribution,
+    'abstract' => is_array($node->abstract)?$node->abstract['value']:$node->abstract,
+    'kingdom' => $node->kingdom,
+    'phylum' => $node->phylum,
+    'class' => $node->class,
+    '`order`' => $node->order,
+    'family' => $node->family,
+    'genus' => $node->genus,
+    'synonyms' => is_array($node->synonyms)?$node->synonyms['value']:$node->synonyms,
+    'author_year_of_scientific_name' => $node->author_year_of_scientific_name,
+    'species_publication_reference' => is_array($node->species_publication_reference)?$node->species_publication_reference['value']:$node->species_publication_reference,
+    'common_names' => is_array($node->common_names)?$node->common_names['value']:$node->common_names,
+    'typification' => is_array($node->typification)?$node->typification['value']:$node->typification,
+    'global_unique_identifier' => $node->global_unique_identifier,
+    'contributors' => is_array($node->contributors)?$node->contributors['value']:$node->contributors,
+    'date_created' => $node->date_created,
+    'habit' => is_array($node->habit)?$node->habit['value']:$node->habit,
+    'life_cycle' => is_array($node->life_cycle)?$node->life_cycle['value']:$node->life_cycle,
+    'reproduction' => is_array($node->reproduction)?$node->reproduction['value']:$node->reproduction,
+    'annual_cycle' => is_array($node->annual_cycle)?$node->annual_cycle['value']:$node->annual_cycle,
+    'scientific_description' => is_array($node->scientific_description)?$node->scientific_description['value']:$node->scientific_description,
+    'brief_description' => is_array($node->brief_description)?$node->brief_description['value']:$node->brief_description,
+    'feeding' => is_array($node->feeding)?$node->feeding['value']:$node->feeding,
+    'behavior' => is_array($node->behavior)?$node->behavior['value']:$node->behavior,
+    'interactions' => is_array($node->interactions)?$node->interactions['value']:$node->interactions,
+    'chromosomic_number_n' => $node->chromosomic_number_n,
+    'molecular_data' => is_array($node->molecular_data)?$node->molecular_data['value']:$node->molecular_data,
+    'population_biology' => is_array($node->population_biology)?$node->population_biology['value']:$node->population_biology,
+    'threat_status' => is_array($node->threat_status)?$node->threat_status['value']:$node->threat_status,
+    'legislation' => is_array($node->legislation)?$node->legislation['value']:$node->legislation,
+    'habitat' => is_array($node->habitat)?$node->habitat['value']:$node->habitat,
+    'territory' => is_array($node->territory)?$node->territory['value']:$node->territory,
+    'endemicity' => is_array($node->endemicity)?$node->endemicity['value']:$node->endemicity,
+    'uses' => is_array($node->uses)?$node->uses['value']:$node->uses,
+    'management' => is_array($node->management)?$node->management['value']:$node->management,
+    'folklore' => is_array($node->folklore)?$node->folklore['value']:$node->folklore,
+    '`references`' => is_array($node->references)?$node->references['value']:$node->references,
+    'unstructured_documentation' => is_array($node->unstructured_documentation)?$node->unstructured_documentation['value']:$node->unstructured_documentation,
+    'other_information_sources' => is_array($node->other_information_sources)?$node->other_information_sources['value']:$node->other_information_sources,
+    'papers' => is_array($node->papers)?$node->papers['value']:$node->papers,
+    'identification_keys' => is_array($node->identification_keys)?$node->identification_keys['value']:$node->identification_keys,
+    'migratory_data' => is_array($node->migratory_data)?$node->migratory_data['value']:$node->migratory_data,
+    'ecological_significance' => is_array($node->ecological_significance)?$node->ecological_significance['value']:$node->ecological_significance,
+    'unstructured_natural_history' => is_array($node->unstructured_natural_history)?$node->unstructured_natural_history['value']:$node->unstructured_natural_history,
+    'invasiveness_data' => is_array($node->invasiveness_data)?$node->invasiveness_data['value']:$node->invasiveness_data,
+    'target_audiences' => $node->target_audiences,
+    'version' => $node->version,
+  ))->execute();
+}
+
+/**
+ * Implement hook_load from the node.api
+ *
+ * To overrite the default load, and bring a register from the table 
+ * pliniancore.
+ */
+function pliniancore_load ($nodes){ 
+
+  $result = db_query('SELECT * FROM {pliniancore} WHERE nid IN (:nids)', array(':nids' => array_keys($nodes)));
+
+  foreach ($result as $record) {
+    $nodes[$record->nid]->institution_code = $record->institution_code;
+    $nodes[$record->nid]->date_last_modified = $record->date_last_modified;
+    $nodes[$record->nid]->taxon_record_id = $record->taxon_record_id;
+    $nodes[$record->nid]->taxon_record_language = $record->taxon_record_language;
+    $nodes[$record->nid]->creators = $record->creators;
+    $nodes[$record->nid]->distribution = $record->distribution;
+    $nodes[$record->nid]->abstract = $record->abstract;
+    $nodes[$record->nid]->kingdom = $record->kingdom;
+    $nodes[$record->nid]->phylum = $record->phylum;
+    $nodes[$record->nid]->class = $record->class;
+    $nodes[$record->nid]->order = $record->order;
+    $nodes[$record->nid]->family = $record->family;
+    $nodes[$record->nid]->genus = $record->genus;
+    $nodes[$record->nid]->synonyms = $record->synonyms;
+    $nodes[$record->nid]->author_year_of_scientific_name = $record->author_year_of_scientific_name;
+    $nodes[$record->nid]->species_publication_reference = $record->species_publication_reference;
+    $nodes[$record->nid]->common_names = $record->common_names;
+    $nodes[$record->nid]->typification = $record->typification;
+    $nodes[$record->nid]->global_unique_identifier = $record->global_unique_identifier;
+    $nodes[$record->nid]->contributors = $record->contributors;
+    $nodes[$record->nid]->date_created = $record->date_created;
+    $nodes[$record->nid]->habit = $record->habit;
+    $nodes[$record->nid]->life_cycle = $record->life_cycle;
+    $nodes[$record->nid]->reproduction = $record->reproduction;
+    $nodes[$record->nid]->annual_cycle = $record->annual_cycle;
+    $nodes[$record->nid]->scientific_description = $record->scientific_description;
+    $nodes[$record->nid]->brief_description = $record->brief_description;
+    $nodes[$record->nid]->feeding = $record->feeding;
+    $nodes[$record->nid]->behavior = $record->behavior;
+    $nodes[$record->nid]->interactions = $record->interactions;
+    $nodes[$record->nid]->chromosomic_number_n = $record->chromosomic_number_n;
+    $nodes[$record->nid]->molecular_data = $record->molecular_data;
+    $nodes[$record->nid]->population_biology = $record->population_biology;
+    $nodes[$record->nid]->threat_status = $record->threat_status;
+    $nodes[$record->nid]->legislation = $record->legislation;
+    $nodes[$record->nid]->habitat = $record->habitat;
+    $nodes[$record->nid]->territory = $record->territory;
+    $nodes[$record->nid]->endemicity = $record->endemicity;
+    $nodes[$record->nid]->uses = $record->uses;
+    $nodes[$record->nid]->management = $record->management;
+    $nodes[$record->nid]->folklore = $record->folklore;
+    $nodes[$record->nid]->references = $record->references;
+    $nodes[$record->nid]->unstructured_documentation = $record->unstructured_documentation;
+    $nodes[$record->nid]->other_information_sources = $record->other_information_sources;
+    $nodes[$record->nid]->papers = $record->papers;
+    $nodes[$record->nid]->identification_keys = $record->identification_keys;
+    $nodes[$record->nid]->migratory_data = $record->migratory_data;
+    $nodes[$record->nid]->ecological_significance = $record->ecological_significance;
+    $nodes[$record->nid]->unstructured_natural_history = $record->unstructured_natural_history;
+    $nodes[$record->nid]->invasiveness_data = $record->invasiveness_data;
+    $nodes[$record->nid]->target_audiences = $record->target_audiences;
+    $nodes[$record->nid]->version = $record->version;
+  }
+}
+
+/**
+ * Implement hook_delete from the node.api
+ *
+ * To delete an specific pliniancore record.
+ */
+function pliniancore_delete ($node){
+
+  $num_deleted = db_delete('pliniancore')
+  ->condition('nid', $node->nid)
+  ->execute();
+
+}
+
+/**
+ * Implement hook_update from the node.api
+ *
+ * To update an instance of the pliniancore content-type
+ */
+function pliniancore_update ($node){ 
+
+  $result = db_update('pliniancore')->fields(array(
+    'institution_code' => $node->institution_code,
+    'date_last_modified' => $node->date_last_modified,
+    'taxon_record_id' => $node->taxon_record_id,
+    'taxon_record_language' => $node->taxon_record_language,
+    'creators' => is_array($node->creators)?$node->creators['value']:$node->creators,
+    'distribution' => is_array($node->distribution)?$node->distribution['value']:$node->distribution,
+    'abstract' => is_array($node->abstract)?$node->abstract['value']:$node->abstract,
+    'kingdom' => $node->kingdom,
+    'phylum' => $node->phylum,
+    'class' => $node->class,
+    '`order`' => $node->order,
+    'family' => $node->family,
+    'genus' => $node->genus,
+    'synonyms' => is_array($node->synonyms)?$node->synonyms['value']:$node->synonyms,
+    'author_year_of_scientific_name' => $node->author_year_of_scientific_name,
+    'species_publication_reference' => is_array($node->species_publication_reference)?$node->species_publication_reference['value']:$node->species_publication_reference,
+    'common_names' => is_array($node->common_names)?$node->common_names['value']:$node->common_names,
+    'typification' => is_array($node->typification)?$node->typification['value']:$node->typification,
+    'global_unique_identifier' => $node->global_unique_identifier,
+    'contributors' => is_array($node->contributors)?$node->contributors['value']:$node->contributors,
+    'date_created' => $node->date_created,
+    'habit' => is_array($node->habit)?$node->habit['value']:$node->habit,
+    'life_cycle' => is_array($node->life_cycle)?$node->life_cycle['value']:$node->life_cycle,
+    'reproduction' => is_array($node->reproduction)?$node->reproduction['value']:$node->reproduction,
+    'annual_cycle' => is_array($node->annual_cycle)?$node->annual_cycle['value']:$node->annual_cycle,
+    'scientific_description' => is_array($node->scientific_description)?$node->scientific_description['value']:$node->scientific_description,
+    'brief_description' => is_array($node->brief_description)?$node->brief_description['value']:$node->brief_description,
+    'feeding' => is_array($node->feeding)?$node->feeding['value']:$node->feeding,
+    'behavior' => is_array($node->behavior)?$node->behavior['value']:$node->behavior,
+    'interactions' => is_array($node->interactions)?$node->interactions['value']:$node->interactions,
+    'chromosomic_number_n' => $node->chromosomic_number_n,
+    'molecular_data' => is_array($node->molecular_data)?$node->molecular_data['value']:$node->molecular_data,
+    'population_biology' => is_array($node->population_biology)?$node->population_biology['value']:$node->population_biology,
+    'threat_status' => is_array($node->threat_status)?$node->threat_status['value']:$node->threat_status,
+    'legislation' => is_array($node->legislation)?$node->legislation['value']:$node->legislation,
+    'habitat' => is_array($node->habitat)?$node->habitat['value']:$node->habitat,
+    'territory' => is_array($node->territory)?$node->territory['value']:$node->territory,
+    'endemicity' => is_array($node->endemicity)?$node->endemicity['value']:$node->endemicity,
+    'uses' => is_array($node->uses)?$node->uses['value']:$node->uses,
+    'management' => is_array($node->management)?$node->management['value']:$node->management,
+    'folklore' => is_array($node->folklore)?$node->folklore['value']:$node->folklore,
+    '`references`' => is_array($node->references)?$node->references['value']:$node->references,
+    'unstructured_documentation' => is_array($node->unstructured_documentation)?$node->unstructured_documentation['value']:$node->unstructured_documentation,
+    'other_information_sources' => is_array($node->other_information_sources)?$node->other_information_sources['value']:$node->other_information_sources,
+    'papers' => is_array($node->papers)?$node->papers['value']:$node->papers,
+    'identification_keys' => is_array($node->identification_keys)?$node->identification_keys['value']:$node->identification_keys,
+    'migratory_data' => is_array($node->migratory_data)?$node->migratory_data['value']:$node->migratory_data,
+    'ecological_significance' => is_array($node->ecological_significance)?$node->ecological_significance['value']:$node->ecological_significance,
+    'unstructured_natural_history' => is_array($node->unstructured_natural_history)?$node->unstructured_natural_history['value']:$node->unstructured_natural_history,
+    'invasiveness_data' => is_array($node->invasiveness_data)?$node->invasiveness_data['value']:$node->invasiveness_data,
+    'target_audiences' => $node->target_audiences,
+    'version' => $node->version,
+  ))
+  ->condition('nid', $node->nid)
+  ->execute();
+}
+
+
+/**
+ * Implement hook_form()
+ *
+ * To custom define the fields and the order in the pliniancore
+ * content-type edition form.
+ *
+ * The field scientific_name is not appearing here because is added
+ * automaticly by the field module and not by hand.
+ */
+function pliniancore_form($node, &$form_state){ 
+
+  $type = node_type_get_type($node);
+
+  $form['institution_code'] = array(
+    '#type' => 'textfield',
+    '#title' => t('Institution Code'),
+    '#default_value' => $node->institution_code,
+    '#maxlength' => 32,
+  );
+
+  $form['date_last_modified'] = array(
+    '#type' => 'textfield',
+    '#title' => t('Date Last Modified'),
+    '#default_value' => $node->date_last_modified,
+    '#maxlength' => 64,
+  );
+
+  $form['taxon_record_id'] = array(
+    '#type' => 'textfield',
+    '#title' => t('Taxon Record ID'),
+    '#default_value' => $node->taxon_record_id,
+    '#maxlength' => 64,
+  );
+
+  $form['taxon_record_language'] = array(
+    '#type' => 'textfield',
+    '#title' => t('Language'),
+    '#default_value' => $node->taxon_record_language,
+    '#maxlength' => 64,
+  );
+
+  $form['creators'] = array(
+    '#base_type' => 'textarea',
+    '#type' => 'text_format',
+    '#format' => 'filtered_html',
+
+    '#title' => t('Creators'),
+    '#default_value' => $node->creators,
+    '#maxlength' => 4096,
+  );
+
+  $form['distribution'] = array(
+    '#base_type' => 'textarea',
+    '#type' => 'text_format',
+    '#format' => 'filtered_html',
+    '#title' => t('Distribution'),
+    '#default_value' => $node->distribution,
+    '#maxlength' => 4096,
+  );
+
+  $form['abstract'] = array(
+    '#base_type' => 'textarea',
+    '#type' => 'text_format',
+    '#format' => 'filtered_html',
+    '#default_value' => $node->abstract,
+    '#maxlength' => 4096,
+  );
+
+  $form['kingdom'] = array(
+    '#type' => 'textfield',
+    '#title' => t('Kingdom'),
+    '#default_value' => $node->kingdom,
+    '#maxlength' => 64,
+  );
+
+  $form['phylum'] = array(
+    '#type' => 'textfield',
+    '#title' => t('Phylum'),
+    '#default_value' => $node->phylum,
+    '#maxlength' => 64,
+  );
+
+  $form['class'] = array(
+    '#type' => 'textfield',
+    '#title' => t('Class'),
+    '#default_value' => $node->class,
+    '#maxlength' => 64,
+  );
+
+  $form['order'] = array(
+    '#type' => 'textfield',
+    '#title' => t('Order'),
+    '#default_value' => $node->order,
+    '#maxlength' => 64,
+  );
+
+  $form['family'] = array(
+    '#type' => 'textfield',
+    '#title' => t('Family'),
+    '#default_value' => $node->family,
+    '#maxlength' => 64,
+  );
+
+  $form['genus'] = array(
+    '#type' => 'textfield',
+    '#title' => t('Genus'),
+    '#default_value' => $node->genus,
+    '#maxlength' => 64,
+  );
+
+  $form['synonyms'] = array(
+    '#base_type' => 'textarea',
+    '#type' => 'text_format',
+    '#format' => 'filtered_html',
+    '#title' => t('Synonyms'),
+    '#default_value' => $node->synonyms,
+    '#maxlength' => 4096,
+  );
+
+  $form['author_year_of_scientific_name'] = array(
+    '#type' => 'textfield',
+    '#title' => t('Scientific Name Authorship'),
+    '#default_value' => $node->author_year_of_scientific_name,
+    '#maxlength' => 256,
+  );
+
+  $form['species_publication_reference'] = array(
+    '#base_type' => 'textarea',
+    '#type' => 'text_format',
+    '#format' => 'filtered_html',
+
+    '#title' => t('Species Publication Reference'),
+    '#default_value' => $node->species_publication_reference,
+    '#maxlength' => 4096,
+  );
+
+  $form['common_names'] = array(
+    '#base_type' => 'textarea',
+    '#type' => 'text_format',
+    '#format' => 'filtered_html',
+    
+    '#title' => t('Common Names'),
+    '#default_value' => $node->common_names,
+    '#maxlength' => 4096,
+  );
+
+  $form['typification'] = array(
+    '#base_type' => 'textarea',
+    '#type' => 'text_format',
+    '#format' => 'filtered_html',
+    
+    '#title' => t('Typification'),
+    '#default_value' => $node->typification,
+    '#maxlength' => 4096,
+  );
+
+  $form['global_unique_identifier'] = array(
+    '#type' => 'textfield',
+    '#title' => t('Global Unique Identifier'),
+    '#default_value' => $node->global_unique_identifier,
+    '#maxlength' => 256,
+  );
+
+  $form['contributors'] = array(
+    '#base_type' => 'textarea',
+    '#type' => 'text_format',
+    '#format' => 'filtered_html',
+
+    '#title' => t('Contributors'),
+    '#default_value' => $node->contributors,
+    '#maxlength' => 4096,
+  );
+
+  $form['date_created'] = array(
+    '#type' => 'textfield',
+    '#title' => t('Date Created'),
+    '#default_value' => $node->date_created,
+    '#maxlength' => 128,
+  );
+
+  $form['habit'] = array(
+    '#base_type' => 'textarea',
+    '#type' => 'text_format',
+    '#format' => 'filtered_html',
+ 
+    '#title' => t('Habit'),
+    '#default_value' => $node->habit,
+    '#maxlength' => 4096,
+  );
+
+  $form['life_cycle'] = array(
+    '#base_type' => 'textarea',
+    '#type' => 'text_format',
+    '#format' => 'filtered_html',
+    
+    '#title' => t('Life Cycle'),
+    '#default_value' => $node->life_cycle,
+    '#maxlength' => 4096,
+  );
+
+  $form['reproduction'] = array(
+    '#base_type' => 'textarea',
+    '#type' => 'text_format',
+    '#format' => 'filtered_html',
+    
+    '#title' => t('Reproduction'),
+    '#default_value' => $node->reproduction,
+    '#maxlength' => 4096,
+  );
+
+  $form['annual_cycle'] = array(
+    '#base_type' => 'textarea',
+    '#type' => 'text_format',
+    '#format' => 'filtered_html',
+    
+    '#title' => t('Annual Cycle'),
+    '#default_value' => $node->annual_cycle,
+    '#maxlength' => 4096,
+  );
+
+  $form['scientific_description'] = array(
+    '#base_type' => 'textarea',
+    '#type' => 'text_format',
+    '#format' => 'filtered_html',
+    
+    '#title' => t('Scientific Description'),
+    '#default_value' => $node->scientific_description,
+    '#maxlength' => 4096,
+  );
+
+  $form['brief_description'] = array(
+    '#base_type' => 'textarea',
+    '#type' => 'text_format',
+    '#format' => 'filtered_html',
+    
+    '#title' => t('Brief Description'),
+    '#default_value' => $node->brief_description,
+    '#maxlength' => 4096,
+  );
+
+  $form['feeding'] = array(
+    '#base_type' => 'textarea',
+    '#type' => 'text_format',
+    '#format' => 'filtered_html',
+    
+    '#title' => t('Feeding'),
+    '#default_value' => $node->feeding,
+    '#maxlength' => 4096,
+  );
+
+  $form['behavior'] = array(
+    '#base_type' => 'textarea',
+    '#type' => 'text_format',
+    '#format' => 'filtered_html',
+    
+    '#title' => t('Behavior'),
+    '#default_value' => $node->behavior,
+    '#maxlength' => 4096,
+  );
+
+  $form['interactions'] = array(
+    '#base_type' => 'textarea',
+    '#type' => 'text_format',
+    '#format' => 'filtered_html',
+    
+    '#title' => t('Interactions'),
+    '#default_value' => $node->interactions,
+    '#maxlength' => 4096,
+  );
+
+  $form['chromosomic_number_n'] = array(
+    '#type' => 'textfield',
+    '#title' => t('Chromosomic Number N'),
+    '#default_value' => $node->chromosomic_number_n,
+    '#maxlength' => 32,
+  );
+
+  $form['molecular_data'] = array(
+    '#base_type' => 'textarea',
+    '#type' => 'text_format',
+    '#format' => 'filtered_html',
+    
+    '#title' => t('Molecular Data'),
+    '#default_value' => $node->molecular_data,
+    '#maxlength' => 4096,
+  );
+
+  $form['population_biology'] = array(
+    '#base_type' => 'textarea',
+    '#type' => 'text_format',
+    '#format' => 'filtered_html',
+    
+    '#title' => t('Population Biology'),
+    '#default_value' => $node->population_biology,
+    '#maxlength' => 4096,
+  );
+
+  $form['threat_status'] = array(
+    '#base_type' => 'textarea',
+    '#type' => 'text_format',
+    '#format' => 'filtered_html',
+    
+    '#title' => t('Threat Status'),
+    '#default_value' => $node->threat_status,
+    '#maxlength' => 4096,
+  );
+
+  $form['legislation'] = array(
+    '#base_type' => 'textarea',
+    '#type' => 'text_format',
+    '#format' => 'filtered_html',
+    
+    '#title' => t('Legislation'),
+    '#default_value' => $node->legislation,
+    '#maxlength' => 4096,
+  );
+
+  $form['habitat'] = array(
+    '#base_type' => 'textarea',
+    '#type' => 'text_format',
+    '#format' => 'filtered_html',
+    
+    '#title' => t('Habitat'),
+    '#default_value' => $node->habitat,
+    '#maxlength' => 4096,
+  );
+
+  $form['territory'] = array(
+    '#base_type' => 'textarea',
+    '#type' => 'text_format',
+    '#format' => 'filtered_html',
+    
+    '#title' => t('Territory'),
+    '#default_value' => $node->territory,
+    '#maxlength' => 4096,
+  );
+
+  $form['endemicity'] = array(
+    '#base_type' => 'textarea',
+    '#type' => 'text_format',
+    '#format' => 'filtered_html',
+    
+    '#title' => t('Endemicity'),
+    '#default_value' => $node->endemicity,
+    '#maxlength' => 4096,
+  );
+
+  $form['uses'] = array(
+    '#base_type' => 'textarea',
+    '#type' => 'text_format',
+    '#format' => 'filtered_html',
+    
+    '#title' => t('Uses'),
+    '#default_value' => $node->uses,
+    '#maxlength' => 4096,
+  );
+
+  $form['management'] = array(
+    '#base_type' => 'textarea',
+    '#type' => 'text_format',
+    '#format' => 'filtered_html',
+    
+    '#title' => t('Management'),
+    '#default_value' => $node->management,
+    '#maxlength' => 4096,
+  );
+
+  $form['folklore'] = array(
+    '#base_type' => 'textarea',
+    '#type' => 'text_format',
+    '#format' => 'filtered_html',
+    
+    '#title' => t('Folklore'),
+    '#default_value' => $node->folklore,
+    '#maxlength' => 4096,
+  );
+
+  $form['references'] = array(
+    '#base_type' => 'textarea',
+    '#type' => 'text_format',
+    '#format' => 'filtered_html',
+    
+    '#title' => t('References'),
+    '#default_value' => $node->references,
+    '#maxlength' => 4096,
+  );
+
+  $form['unstructured_documentation'] = array(
+    '#base_type' => 'textarea',
+    '#type' => 'text_format',
+    '#format' => 'filtered_html',
+    
+    '#title' => t('Unstructured Documentation'),
+    '#default_value' => $node->unstructured_documentation,
+    '#maxlength' => 4096,
+  );
+
+  $form['other_information_sources'] = array(
+    '#base_type' => 'textarea',
+    '#type' => 'text_format',
+    '#format' => 'filtered_html',
+    
+    '#title' => t('Other Information Sources'),
+    '#default_value' => $node->other_information_sources,
+    '#maxlength' => 4096,
+  );
+
+  $form['papers'] = array(
+    '#base_type' => 'textarea',
+    '#type' => 'text_format',
+    '#format' => 'filtered_html',
+    
+    '#title' => t('Papers'),
+    '#default_value' => $node->papers,
+    '#maxlength' => 4096,
+  );
+
+  $form['identification_keys'] = array(
+    '#base_type' => 'textarea',
+    '#type' => 'text_format',
+    '#format' => 'filtered_html',
+    
+    '#title' => t('Identification Keys'),
+    '#default_value' => $node->identification_keys,
+    '#maxlength' => 4096,
+  );
+
+  $form['migratory_data'] = array(
+    '#base_type' => 'textarea',
+    '#type' => 'text_format',
+    '#format' => 'filtered_html',
+    
+    '#title' => t('Migratory Data'),
+    '#default_value' => $node->migratory_data,
+    '#maxlength' => 4096,
+  );
+
+  $form['ecological_significance'] = array(
+    '#base_type' => 'textarea',
+    '#type' => 'text_format',
+    '#format' => 'filtered_html',
+    
+    '#title' => t('Ecological Significance'),
+    '#default_value' => $node->ecological_significance,
+    '#maxlength' => 4096,
+  );
+
+  $form['unstructured_natural_history'] = array(
+    '#base_type' => 'textarea',
+    '#type' => 'text_format',
+    '#format' => 'filtered_html',
+    
+    '#title' => t('Unstructured Natural History'),
+    '#default_value' => $node->unstructured_natural_history,
+    '#maxlength' => 4096,
+  );
+
+  $form['invasiveness_data'] = array(
+    '#base_type' => 'textarea',
+    '#type' => 'text_format',
+    '#format' => 'filtered_html',
+    
+    '#title' => t('Invasiveness Data'),
+    '#default_value' => $node->invasiveness_data,
+    '#maxlength' => 4096,
+  );
+
+  $form['target_audiences'] = array(
+    '#type' => 'textfield',
+    '#title' => t('Target Audiences'),
+    '#default_value' => $node->target_audiences,
+    '#maxlength' => 256,
+  );
+
+  $form['version'] = array(
+    '#type' => 'textfield',
+    '#title' => t('Version'),
+    '#default_value' => $node->version,
+    '#maxlength' => 32,
+  );
+
+
+  return $form;
+}
+
+/**
+ * implement hook_validate from the node.api
+ * TODO: make validations on this point.
+ */
+function pliniancore_validate ($node, $form, &$form_state){
+}
+
+/*
+ * Implements hook_theme
+ *
+ * To tell drupal that the pliniancore content-type is goint to be 
+ * implemented by the  pliniancore_full_view template.
+ */ 
+function pliniancore_theme(){
+	debug("Theme");
+  $ar = array(
+    'views_view_fields__species_record' => array(            
+      'template' => 'templates/views-view-fields--species-record',
+      'base hook' => 'views_view_fields',
+      'variables' => array('node' => null, 'title' => t('Plinian Core view')),      
+    ),   
+  );   
+  return $ar;
+}
+
+
+/**
+ * Implementation of hook_permission().
+ *
+ * Since we are limiting the ability to create new nodes to certain users,
+ * we need to define what those permissions are here. We also define a permission
+ * to allow users to edit the nodes they created.
+ *
+ * TODO: Some of this permissions are not strictly necesary so the list can be
+ * reduced.
+ */
+function pliniancore_permission() {
+
+  return array(
+    'administer pliniancore' => array(
+      'title' => t('Administer pliniancore'),
+      'description' => t('Allows full control (create, update, delete) of all pliniancore nodes'),
+    ),
+    'access pliniancore content' => array(
+      'title' => t('Access pliniancore content'),
+      'description' => t('Allows the user to view pliniancore nodes'),
+    ),
+    'create pliniancore' => array(
+      'title' => t('Create pliniancore'),
+      'description' => t('Allows the user to create new pliniancore nodes'),
+    ),
+    'edit all pliniancore entries' => array(
+      'title' => t('Edit all pliniancore entries'),
+      'description' => t('Allows the user to edit ALL pliniancore entries regardless of who "owns" them, otherwise they are restricted to on'),
+    ),
+    'edit by all pliniancore authors' => array(
+      'title' => t('Edit by all pliniancore authors'),
+      'description' => t('Allows any/all of the authors associated with a pliniancore entry to edit the pliniancore entry. This requires the Drupal UserID be mapped to a pliniancore author ID'),
+    ),
+    'edit pliniancore authors' => array(
+      'title' => t('Edit pliniancore authors'),
+      'description' => t('Allows the user to edit author information'),
+    ),
+    'import from file' => array(
+      'title' => t('Import from file'),
+      'description' => t('Allows the user to import pliniancoregraphic data from files such as BibTex, RIS, EndNote'),
+    ),
+    'show export links' => array(
+      'title' => t('Show export links'),
+      'description' => t('Allows users to see links which allow export of pliniancoregraphic data for an individual entry or the entire result set'),
+    ),
+    'show download links' => array(
+      'title' => t('Show download links'),
+      'description' => t('Allows users to see links to any attachements associated with the pliniancore entry'),
+    ),
+    'show own download links' => array(
+      'title' => t('Show own download links'),
+      'description' => t('Allows user to only see download links on entries for which they are the owner.'),
+    ),
+    'show filter tab' => array(
+      'title' => t('Show filter tab'),
+      'description' => t('This determines if the "Filter" tab on the pliniancore list page will be shown to the user'),
+    ),
+    'show sort links' => array(
+      'title' => t('Show sort links'),
+      'description' => t('This determines if the "Sort" links on the pliniancore list page will be shown to the user'),
+    ),
+    'view full text' => array(
+      'title' => t('Show full text'),
+      'description' => t('This determines if the user will be able to access the "Full Text" of the article if it is available'),
+    ),
+  );
+}
+
+/**
+ * Implement hook_node_access from the node.api
+ *
+ * Allwais allow.
+ */
+function pliniancore_node_access($node, $op, $account){
+  return NODE_ACCESS_ALLOW;
+}
+
+/**
+ * Implements hook_field_default_fields().
+ *
+ * To add the "scientific name" to the list of field.
+ *
+ * This is made by re-using the field 'taxonomic_name' created by
+ * the module scratchpads_taxonomic_name_field
+ */
+function pliniancore_field_default_fields(){
+
+  $fields = array();
+  
+  // Exported field: 'node-specimen_observation-field_taxonomic_name'
+  $fields['node-pliniancore-field_taxonomic_name'] = array(
+    'field_config' => field_info_field('field_taxonomic_name'),
+    'field_instance' => array(
+      'bundle' => 'pliniancore',
+      'default_value' => NULL,
+      'deleted' => '0',
+      'description' => 'The full name of the lowest level taxon to which the organism has been identified in the most recent accepted determination, specified as precisely as possible',
+      'display' => array(
+        'default' => array(
+          'label' => 'above',
+          'module' => 'taxonomy_formatter',
+          'settings' => array(
+            'element_class' => '',
+            'element_option' => '- None -',
+            'links_option' => 1,
+            'append_vocabulary' => 1,
+            'separator_option' => ', ',
+            'wrapper_class' => '',
+            'wrapper_option' => '- None -',
+          ),
+          'type' => 'hidden',
+          'weight' => '1000',
+        ),
+        'linked_node' => array(
+          'label' => 'above',
+          'settings' => array(),
+          'type' => 'hidden',
+          'weight' => 0
+        ),
+        'teaser' => array(
+          'label' => 'above',
+          'settings' => array(),
+          'type' => 'hidden',
+          'weight' => 0
+        )
+      ),
+      'entity_type' => 'node',
+      'field_name' => 'field_taxonomic_name',
+      'label' => 'Scientific name',
+      'required' => 0,
+      'settings' => array(
+        'user_register_form' => FALSE
+      ),
+      'widget' => array(
+        'active' => 0,
+        'module' => 'taxonomy',
+        'settings' => array(
+          'autocomplete_path' => 'taxonomy/autocomplete',
+          'size' => 60
+        ),
+        'type' => 'taxonomy_autocomplete',
+        'weight' => '-3'
+      )
+    )
+  );
+
+  return $fields;
+}

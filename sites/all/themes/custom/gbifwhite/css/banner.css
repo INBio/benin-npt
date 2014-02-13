@@ -1,0 +1,112 @@
+/* Regions */
+div#edit-facet label {
+  color:white;
+}
+
+div#edit-facet {
+  margin-top: 13px;
+}
+
+#region-user-second {
+  color: #fff;
+}
+
+#region-user-second a {
+  color: #fff;
+}
+
+#zone-branding-wrapper {
+  margin-top: 10px;
+}
+
+#region-branding {
+  margin-top: 50px;
+}
+
+#zone-menu-wrapper {
+  margin-top: 93px;
+  background-color: rgba(50, 50, 50, 0.5);
+}
+
+.region-menu-inner {
+  margin-top: 3px;
+}
+
+#region-menu ul li a {
+  text-shadow: 0 1px grey;
+  color: #ccc;
+}
+
+#region-menu ul li a:hover {
+  color: #fff;
+  background: url("../images/triangle_grey_trans.png") no-repeat center bottom;
+}
+
+#region-menu ul li .active {
+  color: #fff;
+  background: url("../images/triangle_grey_trans.png") no-repeat center bottom;
+}
+
+#region-menu {
+  height: 30px;
+}
+
+h1.site-name {
+  font-size: 3em;
+  margin-top: 0px;
+  line-height: 1.6em;
+  font-weight: bold;
+  font-family: DINOT-Medium, sans-serif;
+  text-shadow: 2px 2px #333;
+}
+
+h2.site-name {
+  font-size: 3em;
+}
+
+.site-name a {
+  color: #fff;
+}
+
+.site-slogan {
+  font-size: 1.3em;
+  margin-top: -7px;
+  margin-left: 2px;
+  color: #fff;
+  opacity: .7;
+}
+
+.logo-img {
+  margin: 10px 10px 0 0;
+}
+
+img#logo {
+  height: 60px;
+}
+
+#region-search {
+  position: relative;
+  margin: 95px 10px 0 0;
+  float: right;
+}
+
+Header#section-header {
+  border-bottom: #ccc solid 1px;
+  height: 200px;
+  background: url("../images/banner_1920x200.jpg") center;
+}
+
+#block-views-eol-images-front-block-banner {
+  position: relative;
+  float: right;
+  margin-top: -140px;
+  margin-right: -200px;
+}
+
+#block-views-eol-images-front-block-banner div.views-row {
+  display: inline-block;
+}
+
+#block-views-eol-images-front-block-banner img {
+  border: 1px solid white;
+}

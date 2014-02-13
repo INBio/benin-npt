@@ -1,0 +1,405 @@
+<?php
+
+/**
+ * @file
+ * pliniancore.install
+ *
+ * Creates the schema to support the pliniancore content type.
+ */
+
+/**
+ * Implemenation of the hook_schema
+ *
+ * To create the table that is going to store most of the fields 
+ * of the pliniancore content type.
+ *
+ * Based in PliC 2.3
+ */
+function pliniancore_schema(){
+
+  $schema['pliniancore'] = array(
+
+    // Example (partial) specification for table "node".
+    'description' => 'Table for the Plinian core 2.3 content type.',
+
+    'fields' => array(
+
+      'nid' => array(
+        'description' => 'The primary identifier for a node.',
+        'type' => 'serial',
+        'unsigned' => TRUE,
+        'not null' => TRUE,
+      ),
+      'institution_code' => array(
+        'description' => '',
+        'type' => 'varchar',
+        'length' => 32,
+        'not null' => FALSE,
+      ),
+      'date_last_modified' => array(
+        'description' => '',
+        'type' => 'varchar',
+        'length' => 64,
+        'not null' => FALSE,
+      ),
+      'taxon_record_id' => array(
+        'description' => '',
+        'type' => 'varchar',
+        'length' => 64,
+        'not null' => FALSE,
+      ),
+      'taxon_record_language' => array(
+        'description' => '',
+        'type' => 'varchar',
+        'length' => 64,
+        'not null' => FALSE,
+      ),
+      'creators' => array(
+        'description' => '',
+        'type' => 'text',
+        'length' => 4096,
+        'not null' => FALSE,
+      ),
+      'distribution' => array(
+        'description' => '',
+        'type' => 'text',
+        'length' => 4096,
+        'not null' => FALSE,
+      ),
+      'abstract' => array(
+        'description' => '',
+        'type' => 'text',
+        'length' => 4096,
+        'not null' => FALSE,
+      ),
+      'kingdom' => array(
+        'description' => '',
+        'type' => 'varchar',
+        'length' => 64,
+        'not null' => FALSE,
+      ),
+      'phylum' => array(
+        'description' => '',
+        'type' => 'varchar',
+        'length' => 64,
+        'not null' => FALSE,
+      ),
+      'class' => array(
+        'description' => '',
+        'type' => 'varchar',
+        'length' => 64,
+        'not null' => FALSE,
+      ),
+      'order' => array(
+        'description' => '',
+        'type' => 'varchar',
+        'length' => 64,
+        'not null' => FALSE,
+      ),
+      'family' => array(
+        'description' => '',
+        'type' => 'varchar',
+        'length' => 64,
+        'not null' => FALSE,
+      ),
+      'genus' => array(
+        'description' => '',
+        'type' => 'varchar',
+        'length' => 64,
+        'not null' => FALSE,
+      ),
+      'synonyms' => array(
+        'description' => '',
+        'type' => 'text',
+        'length' => 4096,
+        'not null' => FALSE,
+      ),
+      'author_year_of_scientific_name' => array(
+        'description' => '',
+        'type' => 'varchar',
+        'length' => 256,
+        'not null' => FALSE,
+      ),
+      'species_publication_reference' => array(
+        'description' => '',
+        'type' => 'text',
+        'length' => 4096,
+        'not null' => FALSE,
+      ),
+      'common_names' => array(
+        'description' => '',
+        'type' => 'text',
+        'length' => 4096,
+        'not null' => FALSE,
+      ),
+      'typification' => array(
+        'description' => '',
+        'type' => 'text',
+        'length' => 4096,
+        'not null' => FALSE,
+      ),
+      'global_unique_identifier' => array(
+        'description' => '',
+        'type' => 'varchar',
+        'length' => 256,
+        'not null' => FALSE,
+      ),
+      'contributors' => array(
+        'description' => '',
+        'type' => 'text',
+        'length' => 4096,
+        'not null' => FALSE,
+      ),
+      'date_created' => array(
+        'description' => '',
+        'type' => 'varchar',
+        'length' => 128,
+        'not null' => FALSE,
+      ),
+      'habit' => array(
+        'description' => '',
+        'type' => 'text',
+        'length' => 4096,
+        'not null' => FALSE,
+      ),
+      'life_cycle' => array(
+        'description' => '',
+        'type' => 'text',
+        'length' => 4096,
+        'not null' => FALSE,
+      ),
+      'reproduction' => array(
+        'description' => '',
+        'type' => 'text',
+        'length' => 4096,
+        'not null' => FALSE,
+      ),
+      'annual_cycle' => array(
+        'description' => '',
+        'type' => 'text',
+        'length' => 4096,
+        'not null' => FALSE,
+      ),
+      'scientific_description' => array(
+        'description' => '',
+        'type' => 'text',
+        'length' => 4096,
+        'not null' => FALSE,
+      ),
+      'brief_description' => array(
+        'description' => '',
+        'type' => 'text',
+        'length' => 4096,
+        'not null' => FALSE,
+      ),
+      'feeding' => array(
+        'description' => '',
+        'type' => 'text',
+        'length' => 4096,
+        'not null' => FALSE,
+      ),
+      'behavior' => array(
+        'description' => '',
+        'type' => 'text',
+        'length' => 4096,
+        'not null' => FALSE,
+      ),
+      'interactions' => array(
+        'description' => '',
+        'type' => 'text',
+        'length' => 4096,
+        'not null' => FALSE,
+      ),
+      'chromosomic_number_n' => array(
+        'description' => '',
+        'type' => 'varchar',
+        'length' => 32,
+        'not null' => FALSE,
+      ),
+      'molecular_data' => array(
+        'description' => '',
+        'type' => 'text',
+        'length' => 4096,
+        'not null' => FALSE,
+      ),
+      'population_biology' => array(
+        'description' => '',
+        'type' => 'text',
+        'length' => 4096,
+        'not null' => FALSE,
+      ),
+      'threat_status' => array(
+        'description' => '',
+        'type' => 'text',
+        'length' => 4096,
+        'not null' => FALSE,
+      ),
+      'legislation' => array(
+        'description' => '',
+        'type' => 'text',
+        'length' => 4096,
+        'not null' => FALSE,
+      ),
+      'habitat' => array(
+        'description' => '',
+        'type' => 'text',
+        'length' => 4096,
+        'not null' => FALSE,
+      ),
+      'territory' => array(
+        'description' => '',
+        'type' => 'text',
+        'length' => 4096,
+        'not null' => FALSE,
+      ),
+      'endemicity' => array(
+        'description' => '',
+        'type' => 'text',
+        'length' => 4096,
+        'not null' => FALSE,
+      ),
+      'uses' => array(
+        'description' => '',
+        'type' => 'text',
+        'length' => 4096,
+        'not null' => FALSE,
+      ),
+      'management' => array(
+        'description' => '',
+        'type' => 'text',
+        'length' => 4096,
+        'not null' => FALSE,
+      ),
+      'folklore' => array(
+        'description' => '',
+        'type' => 'text',
+        'length' => 4096,
+        'not null' => FALSE,
+      ),
+      'references' => array(
+        'description' => '',
+        'type' => 'text',
+        'length' => 4096,
+        'not null' => FALSE,
+      ),
+      'unstructured_documentation' => array(
+        'description' => '',
+        'type' => 'text',
+        'length' => 4096,
+        'not null' => FALSE,
+      ),
+      'other_information_sources' => array(
+        'description' => '',
+        'type' => 'text',
+        'length' => 4096,
+        'not null' => FALSE,
+      ),
+      'papers' => array(
+        'description' => '',
+        'type' => 'text',
+        'length' => 4096,
+        'not null' => FALSE,
+      ),
+      'identification_keys' => array(
+        'description' => '',
+        'type' => 'text',
+        'length' => 4096,
+        'not null' => FALSE,
+      ),
+      'migratory_data' => array(
+        'description' => '',
+        'type' => 'text',
+        'length' => 4096,
+        'not null' => FALSE,
+      ),
+      'ecological_significance' => array(
+        'description' => '',
+        'type' => 'text',
+        'length' => 4096,
+        'not null' => FALSE,
+      ),
+      'unstructured_natural_history' => array(
+        'description' => '',
+        'type' => 'text',
+        'length' => 4096,
+        'not null' => FALSE,
+      ),
+      'invasiveness_data' => array(
+        'description' => '',
+        'type' => 'text',
+        'length' => 4096,
+        'not null' => FALSE,
+      ),
+      'target_audiences' => array(
+        'description' => '',
+        'type' => 'varchar',
+        'length' => 256,
+        'not null' => FALSE,
+      ),
+      'version' => array(
+        'description' => '',
+        'type' => 'varchar',
+        'length' => 32,
+        'not null' => FALSE,
+      ),
+    ),
+    'primary key' => array('nid'),
+  );
+  return $schema;
+}
+
+
+
+/**
+ * Implements hook_install()
+ *
+ * To set the following variables:
+ *    - node_submitted_pliniancore: not sure :S FIXME
+ *    - species_page_pliniancore_tab: to indicate in which page of the species
+ *        overview y going to be displayed.
+ *    - species_page_display_pliniancore: to show the records in its own page
+ *        on the principal menu.
+ *
+ */
+function pliniancore_install() {
+  variable_set('node_submitted_pliniancore', 1); 
+  variable_set('species_page_pliniancore_tab', 'descriptions');
+  variable_set('species_page_display_pliniancore', 0);
+}
+
+
+/**
+ * Implements hook_uninstall()
+ *
+ * To delete the pliniancore records, the schema and the variables
+ *
+ * (if the variables are not deleted can become a debugging nightmare, 
+ *  trust me on this one).
+ */
+function pliniancore_uninstall() {
+
+  // Gather all the example content that might have been created while this
+  // module was enabled.  Simple selects still use db_query().
+  // http://api.drupal.org/api/function/db_query/7
+  $sql = 'SELECT nid FROM {node} n WHERE n.type = :type';
+  $result = db_query($sql, array(':type' => 'pliniancore'));
+  $nids = array();
+  foreach ($result as $row) {
+    $nids[] = $row->nid;
+  }
+  // Delete all the nodes at once
+  // http://api.drupal.org/api/function/node_delete_multiple/7
+  node_delete_multiple($nids);
+  // Delete our content type
+  // http://api.drupal.org/api/function/node_type_delete/7
+  node_type_delete('pliniancore');
+
+  db_drop_table('pliniancore');
+
+  // Delete all the installed variables
+  variable_del('node_submitted_pliniancore'); 
+  variable_del('species_page_pliniancore_tab');
+  variable_del('species_page_display_pliniancore');
+}
+
+

@@ -1,0 +1,399 @@
+<?php
+
+/**
+ * @file
+ * darwincore.module
+ *
+ * Implement the hooks to create a new content type.
+ */
+
+/**
+ * Implementation of hook_views_api
+ */
+function darwincore_views_api(){
+	$path = drupal_get_path('module', 'darwincore');	
+	return array(
+		'api' => '3',
+		'path' => $path,
+		'template path' => $path . '/templates'		
+	);
+}
+
+/**
+ * Implements hook_node_info().
+ *
+ * To define the name and the machine name of the new content-type.
+ */
+function darwincore_node_info() {
+  $items = array(
+    'darwincore' => array(
+      'name' => t('Darwin Core'),
+      'base' => 'darwincore',
+      'description' => t('Darwin Core records'),
+      'has_title' => '1',
+      'title_label' => t('Title'),
+      'help' => '',
+    ),
+  );
+  return $items;
+}
+
+/**
+ * Implement hook_insert from the node.api
+ *
+ * To overrite the default insert procedure and put it directly in the darwincore table.
+ */
+function darwincore_insert ($node){ 
+  $result = db_insert('darwincore')->fields(array(
+    'nid' => $node->nid,
+    'institution_code' => $node->institution_code,
+    'modified' => $node->modified,
+    'collection_code' => $node->collection_code,
+    'basis_of_record' => $node->basis_of_record,
+    'catalog_number' => $node->catalog_number,
+  	'decimal_latitude' => $node->decimal_latitude,
+  	'decimal_longitude' => $node->decimal_longitude,
+  ))->execute();
+}
+
+/**
+ * Implement hook_load from the node.api
+ *
+ * To overrite the default load, and bring a register from the table 
+ * darwincore.
+ */
+function darwincore_load ($nodes){ 
+
+  $result = db_query('SELECT * FROM {darwincore} WHERE nid IN (:nids)', array(':nids' => array_keys($nodes)));
+
+  foreach ($result as $record) {
+    $nodes[$record->nid]->institution_code = $record->institution_code;
+    $nodes[$record->nid]->modified = $record->modified;
+    $nodes[$record->nid]->collection_code = $record->collection_code;
+    $nodes[$record->nid]->basis_of_record = $record->basis_of_record;
+    $nodes[$record->nid]->catalog_number = $record->catalog_number;
+    $nodes[$record->nid]->occurrence_details = $record->occurrence_details;
+    $nodes[$record->nid]->occurrence_remarks = $record->occurrence_remarks;
+    $nodes[$record->nid]->sex = $record->sex;
+    $nodes[$record->nid]->event_id = $record->event_id;
+    $nodes[$record->nid]->sampling_protocol = $record->sampling_protocol;
+    $nodes[$record->nid]->event_date = $record->event_date;
+    $nodes[$record->nid]->decimal_latitude = $record->decimal_latitude;    
+    $nodes[$record->nid]->decimal_longitude = $record->decimal_longitude;
+  }
+}
+
+/**
+ * Implement hook_delete from the node.api
+ *
+ * To delete an specific darwincore record.
+ */
+function darwincore_delete ($node){
+
+  $num_deleted = db_delete('darwincore')
+  ->condition('nid', $node->nid)
+  ->execute();
+
+}
+
+/**
+ * Implement hook_update from the node.api
+ *
+ * To update an instance of the darwincore content-type
+ */
+function darwincore_update ($node){ 
+
+  $result = db_update('darwincore')->fields(array(
+    'institution_code' => $node->institution_code,
+    'modified' => $node->modified,
+    'collection_code' => $node->collection_code,
+    'basis_of_record' => $node->basis_of_record,
+    'catalog_number' => $node->catalog_number,
+    //'occurrence_details' => $node->occurrence_details,
+    //'occurrence_remarks' => $node->occurrence_remarks,
+    'sex' => $node->sex,
+    'event_id' => $node->event_id,
+    'sampling_protocol' => $node->sampling_protocol,
+    'event_date' => $node->event_date,
+  ))
+  ->condition('nid', $node->nid)
+  ->execute();
+}
+
+
+/**
+ * Implement hook_form()
+ *
+ * To custom define the fields and the order in the darwincore
+ * content-type edition form.
+ *
+ * The field scientific_name is not appearing here because is added
+ * automaticly by the field module and not by hand.
+ */
+function darwincore_form($node, &$form_state){ 
+
+  $type = node_type_get_type($node);
+
+  $form['institution_code'] = array(
+    '#type' => 'textfield',
+    '#title' => t('Institution Code'),
+    '#default_value' => $node->institution_code,
+    '#maxlength' => 32,
+  );
+
+  $form['modified'] = array(
+    '#type' => 'textfield',
+    '#title' => t('Date Last Modified'),
+    '#default_value' => $node->modified,
+    '#maxlength' => 64,
+  );
+
+  $form['collection_code'] = array(
+    '#type' => 'textfield',
+    '#title' => t('Collection Code'),
+    '#default_value' => $node->collection_code,
+    '#maxlength' => 64,
+  );
+
+  $form['basis_of_record'] = array(
+    '#type' => 'textfield',
+    '#title' => t('Basis of Record'),
+    '#default_value' => $node->basis_of_record,
+    '#maxlength' => 64,
+  );
+
+  $form['catalog_number'] = array(
+    '#type' => 'textfield',
+    '#title' => t('Catalog Number'),
+    '#default_value' => $node->catalog_number,
+    '#maxlength' => 64,
+  );
+
+  $form['occurrence_details'] = array(
+    '#base_type' => 'textarea',
+    '#type' => 'text_format',
+    '#title' => t('Occurrence Details'),
+    '#default_value' => $node->occurrence_details,
+    '#maxlength' => 4096,
+  );
+  
+  $form['occurrence_remarks'] = array(
+  		'#base_type' => 'textarea',
+  		'#type' => 'text_format',
+  		'#title' => t('Occurrence Remarks'),
+  		'#default_value' => $node->occurrence_remarks,
+  		'#maxlength' => 4096,
+  );  
+  
+  $form['sex'] = array(
+  		'#type' => 'textfield',
+  		'#title' => t('Sex'),
+  		'#default_value' => $node->sex,
+  		'#maxlength' => 64,
+  );  
+  
+  $form['event_id'] = array(
+  		'#type' => 'textfield',
+  		'#title' => t('Event ID'),
+  		'#default_value' => $node->event_id,
+  		'#maxlength' => 64,
+  );  
+  
+  $form['sampling_protocol'] = array(
+  		'#type' => 'textfield',
+  		'#title' => t('Sampling Protocol'),
+  		'#default_value' => $node->sampling_protocol,
+  		'#maxlength' => 64,
+  );  
+  
+  $form['event_date'] = array(
+  		'#type' => 'textfield',
+  		'#title' => t('Event Date'),
+  		'#default_value' => $node->event_date,
+  		'#maxlength' => 64,
+  );  
+  
+
+  $form['decimal_longitude'] = array(
+  	'#type' => 'textfield',
+  	'#title' => t('Longitude'),
+  	'#default_value' => $node->decimal_longitude,
+  	'#maxlength' => 64,
+  );  
+
+  return $form;
+}
+
+/**
+ * implement hook_validate from the node.api
+ * TODO: make validations on this point.
+ */
+function darwincore_validate ($node, $form, &$form_state){
+}
+
+/*
+ * Implements hook_theme
+ *
+ * To tell drupal that the pliniancore content-type is goint to be 
+ * implemented by the  pliniancore_full_view template.
+ */ 
+function darwincore_theme(){
+	debug("Theme darwincore");
+  $ar = array(
+    'views_view_fields__specimen_record' => array(            
+      'template' => 'templates/views-view-fields--specimen-record',
+      'base hook' => 'views_view_fields',
+      'variables' => array('node' => null, 'title' => t('Darwin Core view')),      
+    ),   
+  );   
+  return $ar;
+}
+
+/**
+ * Implementation of hook_permission().
+ *
+ * Since we are limiting the ability to create new nodes to certain users,
+ * we need to define what those permissions are here. We also define a permission
+ * to allow users to edit the nodes they created.
+ *
+ * TODO: Some of this permissions are not strictly necesary so the list can be
+ * reduced.
+ */
+function darwincore_permission() {
+
+  return array(
+    'administer darwincore' => array(
+      'title' => t('Administer darwincore'),
+      'description' => t('Allows full control (create, update, delete) of all darwincore nodes'),
+    ),
+    'access darwincore content' => array(
+      'title' => t('Access darwincore content'),
+      'description' => t('Allows the user to view darwincore nodes'),
+    ),
+    'create darwincore' => array(
+      'title' => t('Create darwincore'),
+      'description' => t('Allows the user to create new darwincore nodes'),
+    ),
+    'edit all darwincore entries' => array(
+      'title' => t('Edit all darwincore entries'),
+      'description' => t('Allows the user to edit ALL darwincore entries regardless of who "owns" them, otherwise they are restricted to on'),
+    ),
+    'edit by all darwincore authors' => array(
+      'title' => t('Edit by all darwincore authors'),
+      'description' => t('Allows any/all of the authors associated with a darwincore entry to edit the darwincore entry. This requires the Drupal UserID be mapped to a darwincore author ID'),
+    ),
+    'edit darwincore authors' => array(
+      'title' => t('Edit darwincore authors'),
+      'description' => t('Allows the user to edit author information'),
+    ),
+    'import from file' => array(
+      'title' => t('Import from file'),
+      'description' => t('Allows the user to import darwincore data from files such as BibTex, RIS, EndNote'),
+    ),
+    'show export links' => array(
+      'title' => t('Show export links'),
+      'description' => t('Allows users to see links which allow export of darwincore data for an individual entry or the entire result set'),
+    ),
+    'show download links' => array(
+      'title' => t('Show download links'),
+      'description' => t('Allows users to see links to any attachements associated with the darwincore entry'),
+    ),
+    'show own download links' => array(
+      'title' => t('Show own download links'),
+      'description' => t('Allows user to only see download links on entries for which they are the owner.'),
+    ),
+    'show filter tab' => array(
+      'title' => t('Show filter tab'),
+      'description' => t('This determines if the "Filter" tab on the darwincore list page will be shown to the user'),
+    ),
+    'show sort links' => array(
+      'title' => t('Show sort links'),
+      'description' => t('This determines if the "Sort" links on the darwincore list page will be shown to the user'),
+    ),
+    'view full text' => array(
+      'title' => t('Show full text'),
+      'description' => t('This determines if the user will be able to access the "Full Text" of the article if it is available'),
+    ),
+  );
+}
+
+/**
+ * Implement hook_node_access from the node.api
+ *
+ * Allwais allow.
+ */
+function darwincore_node_access($node, $op, $account){
+  return NODE_ACCESS_ALLOW;
+}
+
+/**
+ * Implements hook_field_default_fields().
+ *
+ * To add the "scientific name" to the list of field.
+ *
+ * This is made by re-using the field 'taxonomic_name' created by
+ * the module scratchpads_taxonomic_name_field
+ */
+function darwincore_field_default_fields(){
+
+  $fields = array();
+  
+  // Exported field: 'node-darwincore-field_taxonomic_name'
+  $fields['node-darwincore-field_taxonomic_name'] = array(
+    'field_config' => field_info_field('field_taxonomic_name'),
+    'field_instance' => array(
+      'bundle' => 'darwincore',
+      'default_value' => NULL,
+      'deleted' => '0',
+      'description' => 'The full name of the lowest level taxon to which the organism has been identified in the most recent accepted determination, specified as precisely as possible',
+      'display' => array(
+        'default' => array(
+          'label' => 'above',
+          'module' => 'taxonomy_formatter',
+          'settings' => array(
+            'element_class' => '',
+            'element_option' => '- None -',
+            'links_option' => 1,
+            'append_vocabulary' => 1,
+            'separator_option' => ', ',
+            'wrapper_class' => '',
+            'wrapper_option' => '- None -',
+          ),
+          'type' => 'hidden',
+          'weight' => '1000',
+        ),
+        'linked_node' => array(
+          'label' => 'above',
+          'settings' => array(),
+          'type' => 'hidden',
+          'weight' => 0
+        ),
+        'teaser' => array(
+          'label' => 'above',
+          'settings' => array(),
+          'type' => 'hidden',
+          'weight' => 0
+        )
+      ),
+      'entity_type' => 'node',
+      'field_name' => 'field_taxonomic_name',
+      'label' => 'Scientific name',
+      'required' => 0,
+      'settings' => array(
+        'user_register_form' => FALSE
+      ),
+      'widget' => array(
+        'active' => 0,
+        'module' => 'taxonomy',
+        'settings' => array(
+          'autocomplete_path' => 'taxonomy/autocomplete',
+          'size' => 60
+        ),
+        'type' => 'taxonomy_autocomplete',
+        'weight' => '-3'
+      )
+    )
+  );
+
+  return $fields;
+}

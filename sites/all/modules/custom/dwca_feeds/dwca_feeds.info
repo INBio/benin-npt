@@ -1,0 +1,14 @@
+package = INBio 
+project = Nodes Portal Toolkit
+
+name = "Dwca Feeds"
+description = "Create a feeds importer to add specimen/observation information to the site. <a href="https://github.com/INBio/npt-inbio/wiki/Feeds-##">See documentation</a>."
+
+core = 7.x
+
+dependencies[] = "ctools"
+dependencies[] = "feeds"
+dependencies[] = "darwincore"
+
+features[ctools][] = "feeds:feeds_importer_default:1"
+features[feeds_importer][] = "darwincore_core_importer"

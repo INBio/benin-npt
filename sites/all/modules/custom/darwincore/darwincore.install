@@ -1,0 +1,1056 @@
+<?php
+
+/**
+ * @file
+ * darwincore.install
+ *
+ * Creates the schema to support the darwincore content type.
+ */
+
+/**
+ * Implementation of the hook_schema
+ *
+ * To create the table that is going to store most of the fields
+ * of the darwincore content type.
+ *
+ * Based in DwCore Star schema
+ * https://code.google.com/p/gbif-providertoolkit/wiki/DarwinCore
+ */
+function darwincore_schema(){
+
+	$schema['darwincore'] = array(
+
+		// Example (partial) specification for table "darwincore".
+		// This terms are from http://rs.gbif.org/core/dwc_occurrence.xml
+		'description' => 'Table for the DwCore content type.',
+
+		'fields' => array(
+
+			'nid' => array(
+				'description' => 'The primary identifier for a node.',
+				'type' => 'serial',
+				'unsigned' => TRUE,
+				'not null' => TRUE,
+			),
+			'event_id' => array(
+				'description' => 'An identifier for the set of information associated with an Event (something that occurs at a place and time). May be a global unique identifier or an identifier specific to the data set. see also http://rs.tdwg.org/dwc/terms/index.htm#eventID',
+				'type' => 'varchar',
+				'length' => 32,
+				'not null' => FALSE,
+			),	
+			'sampling_protocol' => array(
+				'description' => 'The name of, reference to, or description of the method or protocol used during an Event. see also http://rs.tdwg.org/dwc/terms/index.htm#samplingProtocol',
+				'type' => 'varchar',
+				'length' => 32,
+				'not null' => FALSE,
+			),	
+			'sampling_effort' => array(
+				'description' => 'The amount of effort expended during an Event. see also http://rs.tdwg.org/dwc/terms/index.htm#samplingEffort',
+				'type' => 'varchar',
+				'length' => 32,
+				'not null' => FALSE,
+			),							
+			'event_date' => array(
+				'description' => 'The date-time or interval during which an Event occurred. For occurrences, this is the date-time when the event was recorded. Not suitable for a time in a geological context. Recommended best practice is to use an encoding scheme, such as ISO 8601:2004(E). see also http://rs.tdwg.org/dwc/terms/index.htm#eventDate',
+				'type' => 'varchar',
+				'length' => 32,
+				'not null' => FALSE,
+			),		
+			'event_time' => array(
+				'description' => 'The time or interval during which an Event occurred. Recommended best practice is to use an encoding scheme, such as ISO 8601:2004(E). see also http://rs.tdwg.org/dwc/terms/index.htm#eventTime',
+				'type' => 'varchar',
+				'length' => 32,
+				'not null' => FALSE,
+			),
+			'start_day_of_year' => array(
+				'description' => 'The earliest ordinal day of the year on which the Event occurred (1 for January 1, 365 for December 31, except in a leap year, in which case it is 366). see also http://rs.tdwg.org/dwc/terms/index.htm#startDayOfYear',
+				'type' => 'varchar',
+				'length' => 32,
+				'not null' => FALSE,
+			),		
+			'end_day_of_year' => array(
+				'description' => 'The latest ordinal day of the year on which the Event occurred (1 for January 1, 365 for December 31, except in a leap year, in which case it is 366). see also http://rs.tdwg.org/dwc/terms/index.htm#endDayOfYear',
+				'type' => 'varchar',
+				'length' => 32,
+				'not null' => FALSE,
+			),								
+			'year' => array(
+				'description' => 'The four-digit year in which the Event occurred, according to the Common Era Calendar. see also http://rs.tdwg.org/dwc/terms/index.htm#year',
+				'type' => 'varchar',
+				'length' => 32,
+				'not null' => FALSE,
+			),
+			'month' => array(
+				'description' => 'The ordinal month in which the Event occurred. see also http://rs.tdwg.org/dwc/terms/index.htm#month',
+				'type' => 'varchar',
+				'length' => 32,
+				'not null' => FALSE,
+			),			
+			'day' => array(
+				'description' => 'The integer day of the month on which the Event occurred. see also http://rs.tdwg.org/dwc/terms/index.htm#day',
+				'type' => 'varchar',
+				'length' => 32,
+				'not null' => FALSE,
+			),		
+			'verbatim_event_date' => array(
+				'description' => 'The verbatim original representation of the date and time information for an Event. see also http://rs.tdwg.org/dwc/terms/index.htm#verbatimEventDate',
+				'type' => 'varchar',
+				'length' => 64,
+				'not null' => FALSE,
+			),	
+			'habitat' => array(
+				'description' => 'A category or description of the habitat in which the Event occurred. see also http://rs.tdwg.org/dwc/terms/index.htm#habitat',
+				'type' => 'varchar',
+				'length' => 64,
+				'not null' => FALSE,
+			),		
+			'field_number' => array(
+				'description' => 'An identifier given to the event in the field. Often serves as a link between field notes and the Event. see also http://rs.tdwg.org/dwc/terms/index.htm#fieldNumber',
+				'type' => 'varchar',
+				'length' => 64,
+				'not null' => FALSE,
+			),
+			'field_notes' => array(
+				'description' => 'One of a) an indicator of the existence of, b) a reference to (publication, URI), or c) the text of notes taken in the field about the Event. see also http://rs.tdwg.org/dwc/terms/index.htm#fieldNotes',
+				'type' => 'varchar',
+				'length' => 64,
+				'not null' => FALSE,
+			),
+			'event_remarks' => array(
+				'description' => 'Comments or notes about the Event. see also http://rs.tdwg.org/dwc/terms/index.htm#eventRemarks',
+				'type' => 'varchar',
+				'length' => 64,
+				'not null' => FALSE,
+			),		
+			'geological_context_id' => array(
+				'description' => 'An identifier for the set of information associated with a GeologicalContext (the location within a geological context, such as stratigraphy). May be a global unique identifier or an identifier specific to the data set. see also http://rs.tdwg.org/dwc/terms/index.htm#geologicalContextID',
+				'type' => 'varchar',
+				'length' => 64,
+				'not null' => FALSE,
+			),		
+
+			'earliest_eon_or_lowest_eonothem' => array(
+				'description' => 'The full name of the earliest possible geochronologic eon or lowest chrono-stratigraphic eonothem or the informal name ("Precambrian") attributable to the stratigraphic horizon from which the cataloged item was collected. see also http://rs.tdwg.org/dwc/terms/index.htm#earliestEonOrLowestEonothem',
+				'type' => 'varchar',
+				'length' => 64,
+				'not null' => FALSE,
+			),	
+			'latest_eon_or_highest_eonothem' => array(
+				'description' => 'The full name of the latest possible geochronologic eon or highest chrono-stratigraphic eonothem or the informal name ("Precambrian") attributable to the stratigraphic horizon from which the cataloged item was collected. see also http://rs.tdwg.org/dwc/terms/index.htm#latestEonOrHighestEonothem',
+				'type' => 'varchar',
+				'length' => 64,
+				'not null' => FALSE,
+			),
+			'earliest_era_or_lowest_erathem' => array(
+				'description' => 'The full name of the earliest possible geochronologic era or lowest chronostratigraphic erathem attributable to the stratigraphic horizon from which the cataloged item was collected. see also http://rs.tdwg.org/dwc/terms/index.htm#earliestEraOrLowestErathem',
+				'type' => 'varchar',
+				'length' => 64,
+				'not null' => FALSE,
+			),
+			'latest_era_or_highest_erathem' => array(
+				'description' => 'The full name of the latest possible geochronologic era or highest chronostratigraphic erathem attributable to the stratigraphic horizon from which the cataloged item was collected. see also http://rs.tdwg.org/dwc/terms/index.htm#latestEraOrHighestErathem',
+				'type' => 'varchar',
+				'length' => 64,
+				'not null' => FALSE,
+			),
+			'earliest_period_or_lowest_system' => array(
+				'description' => 'The full name of the earliest possible geochronologic period or lowest chronostratigraphic system attributable to the stratigraphic horizon from which the cataloged item was collected. see also http://rs.tdwg.org/dwc/terms/index.htm#earliestPeriodOrLowestSystem',
+				'type' => 'varchar',
+				'length' => 64,
+				'not null' => FALSE,
+			),
+			'latest_period_or_highest_system' => array(
+				'description' => 'The full name of the latest possible geochronologic period or highest chronostratigraphic system attributable to the stratigraphic horizon from which the cataloged item was collected. see also http://rs.tdwg.org/dwc/terms/index.htm#latestPeriodOrHighestSystem',
+				'type' => 'varchar',
+				'length' => 64,
+				'not null' => FALSE,
+			),
+			'earliest_epoch_or_lowest_series' => array(
+				'description' => 'The full name of the earliest possible geochronologic epoch or lowest chronostratigraphic series attributable to the stratigraphic horizon from which the cataloged item was collected. see also http://rs.tdwg.org/dwc/terms/index.htm#earliestEpochOrLowestSeries',
+				'type' => 'varchar',
+				'length' => 64,
+				'not null' => FALSE,
+			),
+			'latest_epoch_or_highest_series' => array(
+				'description' => 'The full name of the latest possible geochronologic epoch or highest chronostratigraphic series attributable to the stratigraphic horizon from which the cataloged item was collected. see also http://rs.tdwg.org/dwc/terms/index.htm#latestEpochOrHighestSeries',
+				'type' => 'varchar',
+				'length' => 64,
+				'not null' => FALSE,
+			),
+			'earliest_age_or_lowest_stage' => array(
+				'description' => 'The full name of the earliest possible geochronologic age or lowest chronostratigraphic stage attributable to the stratigraphic horizon from which the cataloged item was collected. see also http://rs.tdwg.org/dwc/terms/index.htm#earliestAgeOrLowestStage',
+				'type' => 'varchar',
+				'length' => 64,
+				'not null' => FALSE,
+			),		
+			'latest_age_or_highest_stage' => array(
+				'description' => 'The full name of the latest possible geochronologic age or highest chronostratigraphic stage attributable to the stratigraphic horizon from which the cataloged item was collected. see also http://rs.tdwg.org/dwc/terms/index.htm#latestAgeOrHighestStage',
+				'type' => 'varchar',
+				'length' => 64,
+				'not null' => FALSE,
+			),
+			'lowest_biostratigraphic_zone' => array(
+				'description' => 'The full name of the lowest possible geological biostratigraphic zone of the stratigraphic horizon from which the cataloged item was collected. see also http://rs.tdwg.org/dwc/terms/index.htm#lowestBiostratigraphicZone',
+				'type' => 'varchar',
+				'length' => 64,
+				'not null' => FALSE,
+			),		
+			'highest_biostratigraphic_zone' => array(
+				'description' => 'The full name of the highest possible geological biostratigraphic zone of the stratigraphic horizon from which the cataloged item was collected. see also http://rs.tdwg.org/dwc/terms/index.htm#highestBiostratigraphicZone',
+				'type' => 'varchar',
+				'length' => 64,
+				'not null' => FALSE,
+			),
+			'lithostratigraphic_terms' => array(
+				'description' => 'The combination of all litho-stratigraphic names for the rock from which the cataloged item was collected. see also http://rs.tdwg.org/dwc/terms/index.htm#lithostratigraphicTerms',
+				'type' => 'varchar',
+				'length' => 64,
+				'not null' => FALSE,
+			),
+			'group' => array(
+				'description' => 'The full name of the lithostratigraphic group from which the cataloged item was collected. see also http://rs.tdwg.org/dwc/terms/index.htm#group',
+				'type' => 'varchar',
+				'length' => 64,
+				'not null' => FALSE,
+			),
+			'formation' => array(
+				'description' => 'The full name of the lithostratigraphic formation from which the cataloged item was collected. see also http://rs.tdwg.org/dwc/terms/index.htm#formation',
+				'type' => 'varchar',
+				'length' => 64,
+				'not null' => FALSE,
+			),	
+			'member' => array(
+				'description' => 'The full name of the lithostratigraphic member from which the cataloged item was collected. see also http://rs.tdwg.org/dwc/terms/index.htm#member',
+				'type' => 'varchar',
+				'length' => 64,
+				'not null' => FALSE,
+			),
+			'bed' => array(
+				'description' => 'The full name of the lithostratigraphic bed from which the cataloged item was collected. see also http://rs.tdwg.org/dwc/terms/index.htm#bed',
+				'type' => 'varchar',
+				'length' => 64,
+				'not null' => FALSE,
+			),
+			'identification_id' => array(
+				'description' => 'An identifier for the Identification (the body of information associated with the assignment of a scientific name). May be a global unique identifier or an identifier specific to the data set. see also http://rs.tdwg.org/dwc/terms/index.htm#identificationID',
+				'type' => 'varchar',
+				'length' => 64,
+				'not null' => FALSE,
+			),
+			'identified_by' => array(
+				'description' => 'A list (concatenated and separated) of names of people, groups, or organizations who assigned the Taxon to the subject. see also http://rs.tdwg.org/dwc/terms/index.htm#identifiedBy',
+				'type' => 'varchar',
+				'length' => 64,
+				'not null' => FALSE,
+			),
+			'date_identified' => array(
+				'description' => 'The date on which the subject was identified as representing the Taxon. Recommended best practice is to use an encoding scheme, such as ISO 8601:2004(E). see also http://rs.tdwg.org/dwc/terms/index.htm#dateIdentified',
+				'type' => 'varchar',
+				'length' => 64,
+				'not null' => FALSE,
+			),
+			'identification_references' => array(
+				'description' => 'A list (concatenated and separated) of references (publication, global unique identifier, URI) used in the Identification. see also http://rs.tdwg.org/dwc/terms/index.htm#identificationReferences',
+				'type' => 'varchar',
+				'length' => 64,
+				'not null' => FALSE,
+			),
+			'identification_remarks' => array(
+				'description' => 'Comments or notes about the Identification. see also http://rs.tdwg.org/dwc/terms/index.htm#identificationRemarks',
+				'type' => 'varchar',
+				'length' => 64,
+				'not null' => FALSE,
+			),
+			'identification_qualifier' => array(
+				'description' => 'A brief phrase or a standard term ("cf.", "aff.") to express the determiners doubts about the Identification. see also http://rs.tdwg.org/dwc/terms/index.htm#identificationQualifier',
+				'type' => 'varchar',
+				'length' => 64,
+				'not null' => FALSE,
+			),
+			'identification_verification_status' => array(
+				'description' => 'A categorical indicator of the extent to which the taxonomic identification has been verified to be correct. Recommended best practice is to use a controlled vocabulary such as that used in HISPID/ABCD. see also http://rs.tdwg.org/dwc/terms/index.htm#identificationVerificationStatus',
+				'type' => 'varchar',
+				'length' => 64,
+				'not null' => FALSE,
+			),
+			'type_status' => array(
+				'description' => 'A list (concatenated and separated) of nomenclatural types (type status, typified scientific name, publication) applied to the subject. see also http://rs.tdwg.org/dwc/terms/index.htm#typeStatus',
+				'type' => 'varchar',
+				'length' => 64,
+				'not null' => FALSE,
+			),
+			'location_id' => array(
+				'description' => 'An identifier for the set of location information (data associated with dcterms:Location). May be a global unique identifier or an identifier specific to the data set. see also http://rs.tdwg.org/dwc/terms/index.htm#locationID',
+				'type' => 'varchar',
+				'length' => 64,
+				'not null' => FALSE,
+			),
+			'higher_geography_id' => array(
+				'description' => 'An identifier for the geographic region within which the Location occurred. Recommended best practice is to use an persistent identifier from a controlled vocabulary such as the Getty Thesaurus of Geographic Names. see also http://rs.tdwg.org/dwc/terms/index.htm#higherGeographyID',
+				'type' => 'varchar',
+				'length' => 64,
+				'not null' => FALSE,
+			),
+			'higher_geography' => array(
+				'description' => 'A list (concatenated and separated) of geographic names less specific than the information captured in the locality term. see also http://rs.tdwg.org/dwc/terms/index.htm#higherGeography',
+				'type' => 'varchar',
+				'length' => 64,
+				'not null' => FALSE,
+			),
+			'continent' => array(
+				'description' => 'The name of the continent in which the Location occurs. Recommended best practice is to use a controlled vocabulary such as the Getty Thesaurus of Geographic Names or the ISO 3166 Continent code. see also http://rs.tdwg.org/dwc/terms/index.htm#continent',
+				'type' => 'varchar',
+				'length' => 64,
+				'not null' => FALSE,
+			),
+			'water_body' => array(
+				'description' => 'The name of the water body in which the Location occurs. Recommended best practice is to use a controlled vocabulary such as the Getty Thesaurus of Geographic Names. see also http://rs.tdwg.org/dwc/terms/index.htm#waterBody',
+				'type' => 'varchar',
+				'length' => 64,
+				'not null' => FALSE,
+			),
+			'island_group' => array(
+				'description' => 'The name of the island group in which the Location occurs. Recommended best practice is to use a controlled vocabulary such as the Getty Thesaurus of Geographic Names. see also http://rs.tdwg.org/dwc/terms/index.htm#islandGroup',
+				'type' => 'varchar',
+				'length' => 64,
+				'not null' => FALSE,
+			),
+			'island' => array(
+				'description' => 'The name of the island on or near which the Location occurs. Recommended best practice is to use a controlled vocabulary such as the Getty Thesaurus of Geographic Names. see also http://rs.tdwg.org/dwc/terms/index.htm#island',
+				'type' => 'varchar',
+				'length' => 64,
+				'not null' => FALSE,
+			),
+			'country' => array(
+				'description' => 'The name of the country or major administrative unit in which the Location occurs. Recommended best practice is to use a controlled vocabulary such as the Getty Thesaurus of Geographic Names. see also http://rs.tdwg.org/dwc/terms/index.htm#country',
+				'type' => 'varchar',
+				'length' => 64,
+				'not null' => FALSE,
+			),
+			'country_code' => array(
+				'description' => 'The standard code for the country in which the Location occurs. Recommended best practice is to use ISO 3166-1-alpha-2 country codes. see also http://rs.tdwg.org/dwc/terms/index.htm#countryCode',
+				'type' => 'varchar',
+				'length' => 64,
+				'not null' => FALSE,
+			),
+			'state_province' => array(
+				'description' => 'The name of the next smaller administrative region than country (state, province, canton, department, region, etc.) in which the Location occurs. see also http://rs.tdwg.org/dwc/terms/index.htm#stateProvince',
+				'type' => 'varchar',
+				'length' => 64,
+				'not null' => FALSE,
+			),
+			'county' => array(
+				'description' => 'The full, unabbreviated name of the next smaller administrative region than stateProvince (county, shire, department, etc.) in which the Location occurs. see also http://rs.tdwg.org/dwc/terms/index.htm#county',
+				'type' => 'varchar',
+				'length' => 64,
+				'not null' => FALSE,
+			),
+			'municipality' => array(
+				'description' => 'The full, unabbreviated name of the next smaller administrative region than county (city, municipality, etc.) in which the Location occurs. Do not use this term for a nearby named place that does not contain the actual location. see also http://rs.tdwg.org/dwc/terms/index.htm#municipality',
+				'type' => 'varchar',
+				'length' => 64,
+				'not null' => FALSE,
+			),
+			'locality' => array(
+				'description' => 'The specific description of the place. Less specific geographic information can be provided in other geographic terms (higherGeography, continent, country, stateProvince, county, municipality, waterBody, island, islandGroup). This term may contain information modified from the original to correct perceived errors or standardize the description. see also http://rs.tdwg.org/dwc/terms/index.htm#locality',
+				'type' => 'varchar',
+				'length' => 64,
+				'not null' => FALSE,
+			),
+			'verbatim_locality' => array(
+				'description' => 'The original textual description of the place. see also http://rs.tdwg.org/dwc/terms/index.htm#verbatimLocality',
+				'type' => 'varchar',
+				'length' => 64,
+				'not null' => FALSE,
+			),		
+			'verbatim_elevation' => array(
+				'description' => 'The original description of the elevation (altitude, usually above sea level) of the Location. see also http://rs.tdwg.org/dwc/terms/index.htm#verbatimElevation',
+				'type' => 'varchar',
+				'length' => 64,
+				'not null' => FALSE,
+			),		
+			'minimum_elevation_in_meters' => array(
+				'description' => 'The lower limit of the range of elevation (altitude, usually above sea level), in meters. see also http://rs.tdwg.org/dwc/terms/index.htm#minimumElevationInMeters',
+				'type' => 'varchar',
+				'length' => 32,
+				'not null' => FALSE,
+			),
+			'maximum_elevation_in_meters' => array(
+				'description' => 'The upper limit of the range of elevation (altitude, usually above sea level), in meters. see also http://rs.tdwg.org/dwc/terms/index.htm#maximumElevationInMeters',
+				'type' => 'varchar',
+				'length' => 32,
+				'not null' => FALSE,
+			),
+			'verbatim_depth' => array(
+				'description' => 'The original description of the depth below the local surface. see also http://rs.tdwg.org/dwc/terms/index.htm#verbatimDepth',
+				'type' => 'varchar',
+				'length' => 64,
+				'not null' => FALSE,
+			),
+			'minimum_depth_in_meters' => array(
+				'description' => 'The lesser depth of a range of depth below the local surface, in meters. see also http://rs.tdwg.org/dwc/terms/index.htm#minimumDepthInMeters',
+				'type' => 'varchar',
+				'length' => 32,
+				'not null' => FALSE,
+			),
+			'maximum_depth_in_meters' => array(
+				'description' => 'The greater depth of a range of depth below the local surface, in meters. see also http://rs.tdwg.org/dwc/terms/index.htm#maximumDepthInMeters',
+				'type' => 'varchar',
+				'length' => 32,
+				'not null' => FALSE,
+			),
+			'minimum_distance_above_surface_in_meters' => array(
+				'description' => 'The lesser distance in a range of distance from a reference surface in the vertical direction, in meters. Use positive values for locations above the surface, negative values for locations below. If depth measures are given, the reference surface is the location given by the depth, otherwise the reference surface is the location given by the elevation. see also http://rs.tdwg.org/dwc/terms/index.htm#minimumDistanceAboveSurfaceInMeters',
+				'type' => 'varchar',
+				'length' => 32,
+				'not null' => FALSE,
+			),
+			'maximum_distance_above_surface_in_meters' => array(
+				'description' => 'The greater distance in a range of distance from a reference surface in the vertical direction, in meters. Use positive values for locations above the surface, negative values for locations below. If depth measures are given, the reference surface is the location given by the depth, otherwise the reference surface is the location given by the elevation. see also http://rs.tdwg.org/dwc/terms/index.htm#maximumDistanceAboveSurfaceInMeters',
+				'type' => 'varchar',
+				'length' => 32,
+				'not null' => FALSE,
+			),
+			'location_according_to' => array(
+				'description' => 'Information about the source of this Location information. Could be a publication (gazetteer), institution, or team of individuals. see also http://rs.tdwg.org/dwc/terms/index.htm#locationAccordingTo',
+				'type' => 'varchar',
+				'length' => 64,
+				'not null' => FALSE,
+			),
+			'location_remarks' => array(
+				'description' => 'Comments or notes about the Location. see also http://rs.tdwg.org/dwc/terms/index.htm#locationRemarks',
+				'type' => 'varchar',
+				'length' => 64,
+				'not null' => FALSE,
+			),
+			'verbatim_coordinates' => array(
+				'description' => 'The verbatim original spatial coordinates of the Location. The coordinate ellipsoid, geodeticDatum, or full Spatial Reference System (SRS) for these coordinates should be stored in verbatimSRS and the coordinate system should be stored in verbatimCoordinateSystem. see also http://rs.tdwg.org/dwc/terms/index.htm#verbatimCoordinates',
+				'type' => 'varchar',
+				'length' => 64,
+				'not null' => FALSE,
+			),
+			'verbatim_latitude' => array(
+				'description' => 'The verbatim original latitude of the Location. The coordinate ellipsoid, geodeticDatum, or full Spatial Reference System (SRS) for these coordinates should be stored in verbatimSRS and the coordinate system should be stored in verbatimCoordinateSystem. see also http://rs.tdwg.org/dwc/terms/index.htm#verbatimLatitude',
+				'type' => 'varchar',
+				'length' => 64,
+				'not null' => FALSE,
+			),
+			'verbatim_longitude' => array(
+				'description' => 'The verbatim original longitude of the Location. The coordinate ellipsoid, geodeticDatum, or full Spatial Reference System (SRS) for these coordinates should be stored in verbatimSRS and the coordinate system should be stored in verbatimCoordinateSystem. see also http://rs.tdwg.org/dwc/terms/index.htm#verbatimLongitude',
+				'type' => 'varchar',
+				'length' => 64,
+				'not null' => FALSE,
+			),	
+			'verbatim_coordinate_system' => array(
+				'description' => 'The spatial coordinate system for the verbatimLatitude and verbatimLongitude or the verbatimCoordinates of the Location. Recommended best practice is to use a controlled vocabulary. see also http://rs.tdwg.org/dwc/terms/index.htm#verbatimCoordinateSystem',
+				'type' => 'varchar',
+				'length' => 64,
+				'not null' => FALSE,
+			),
+			'verbatim_srs' => array(
+				'description' => 'The ellipsoid, geodetic datum, or spatial reference system (SRS) upon which coordinates given in verbatimLatitude and verbatimLongitude, or verbatimCoordinates are based. Recommended best practice is use the EPSG code as a controlled vocabulary to provide an SRS, if known. Otherwise use a controlled vocabulary for the name or code of the geodetic datum, if known. Otherwise use a controlled vocabulary for the name or code of the ellipsoid, if known. If none of these is known, use the value "unknown". see also http://rs.tdwg.org/dwc/terms/index.htm#verbatimSRS',
+				'type' => 'varchar',
+				'length' => 64,
+				'not null' => FALSE,
+			),
+			'decimal_latitude' => array(
+				'description' => 'The geographic latitude (in decimal degrees, using the spatial reference system given in geodeticDatum) of the geographic center of a Location. Positive values are north of the Equator, negative values are south of it. Legal values lie between -90 and 90, inclusive. see also http://rs.tdwg.org/dwc/terms/index.htm#decimalLatitude',
+				'type' => 'varchar',
+				'length' => 32,
+				'not null' => FALSE,
+			),
+			'decimal_longitude' => array(
+				'description' => 'The geographic longitude (in decimal degrees, using the spatial reference system given in geodeticDatum) of the geographic center of a Location. Positive values are east of the Greenwich Meridian, negative values are west of it. Legal values lie between -180 and 180, inclusive. see also http://rs.tdwg.org/dwc/terms/index.htm#decimalLongitude',
+				'type' => 'varchar',
+				'length' => 32,
+				'not null' => FALSE,
+			),	
+			'geodetic_datum' => array(
+				'description' => 'The ellipsoid, geodetic datum, or spatial reference system (SRS) upon which the geographic coordinates given in decimalLatitude and decimalLongitude as based. Recommended best practice is use the EPSG code as a controlled vocabulary to provide an SRS, if known. Otherwise use a controlled vocabulary for the name or code of the geodetic datum, if known. Otherwise use a controlled vocabulary for the name or code of the ellipsoid, if known. If none of these is known, use the value "unknown". see also http://rs.tdwg.org/dwc/terms/index.htm#geodeticDatum',
+				'type' => 'varchar',
+				'length' => 64,
+				'not null' => FALSE,
+			),		
+			'coordinate_uncertainty_in_meters' => array(
+				'description' => 'The horizontal distance (in meters) from the given decimalLatitude and decimalLongitude describing the smallest circle containing the whole of the Location. Leave the value empty if the uncertainty is unknown, cannot be estimated, or is not applicable (because there are no coordinates). Zero is not a valid value for this term. see also http://rs.tdwg.org/dwc/terms/index.htm#coordinateUncertaintyInMeters',
+				'type' => 'varchar',
+				'length' => 64,
+				'not null' => FALSE,
+			),
+			'coordinate_precision' => array(
+				'description' => 'A decimal representation of the precision of the coordinates given in the decimalLatitude and decimalLongitude. see also http://rs.tdwg.org/dwc/terms/index.htm#coordinatePrecision',
+				'type' => 'varchar',
+				'length' => 64,
+				'not null' => FALSE,
+			),
+			'point_radius_spatial_fit' => array(
+				'description' => 'The ratio of the area of the point-radius (decimalLatitude, decimalLongitude, coordinateUncertaintyInMeters) to the area of the true (original, or most specific) spatial representation of the Location. Legal values are 0, greater than or equal to 1, or undefined. A value of 1 is an exact match or 100% overlap. A value of 0 should be used if the given point-radius does not completely contain the original representation. The pointRadiusSpatialFit is undefined (and should be left blank) if the original representation is a point without uncertainty and the given georeference is not that same point (without uncertainty). If both the original and the given georeference are the same point, the pointRadiusSpatialFit is 1. see also http://rs.tdwg.org/dwc/terms/index.htm#pointRadiusSpatialFit',
+				'type' => 'varchar',
+				'length' => 64,
+				'not null' => FALSE,
+			),
+			'footprint_wkt' => array(
+				'description' => 'A Well-Known Text (WKT) representation of the shape (footprint, geometry) that defines the Location. A Location may have both a point-radius representation (see decimalLatitude) and a footprint representation, and they may differ from each other. see also http://rs.tdwg.org/dwc/terms/index.htm#footprintWKT',
+				'type' => 'varchar',
+				'length' => 64,
+				'not null' => FALSE,
+			),
+			'footprint_srs' => array(
+				'description' => 'A Well-Known Text (WKT) representation of the Spatial Reference System (SRS) for the footprintWKT of the Location. Do not use this term to describe the SRS of the decimalLatitude and decimalLongitude, even if it is the same as for the footprintWKT - use the geodeticDatum instead. see also http://rs.tdwg.org/dwc/terms/index.htm#footprintSRS',
+				'type' => 'varchar',
+				'length' => 64,
+				'not null' => FALSE,
+			),
+			'footprint_spatial_fit' => array(
+				'description' => 'The ratio of the area of the footprint (footprintWKT) to the area of the true (original, or most specific) spatial representation of the Location. Legal values are 0, greater than or equal to 1, or undefined. A value of 1 is an exact match or 100% overlap. A value of 0 should be used if the given footprint does not completely contain the original representation. The footprintSpatialFit is undefined (and should be left blank) if the original representation is a point and the given georeference is not that same point. If both the original and the given georeference are the same point, the footprintSpatialFit is 1. see also http://rs.tdwg.org/dwc/terms/index.htm#footprintSpatialFit',
+				'type' => 'varchar',
+				'length' => 64,
+				'not null' => FALSE,
+			),
+			'georeferenced_by' => array(
+				'description' => 'A list (concatenated and separated) of names of people, groups, or organizations who determined the georeference (spatial representation) the Location. see also http://rs.tdwg.org/dwc/terms/index.htm#georeferencedBy',
+				'type' => 'varchar',
+				'length' => 64,
+				'not null' => FALSE,
+			),		
+			'georeferenced_date' => array(
+				'description' => 'The date on which the Location was georeferenced. Recommended best practice is to use an encoding scheme, such as ISO 8601:2004(E). see also http://rs.tdwg.org/dwc/terms/index.htm#georeferencedDate',
+				'type' => 'varchar',
+				'length' => 64,
+				'not null' => FALSE,
+			),
+			'georeference_protocol' => array(
+				'description' => 'A description or reference to the methods used to determine the spatial footprint, coordinates, and uncertainties. see also http://rs.tdwg.org/dwc/terms/index.htm#georeferenceProtocol',
+				'type' => 'varchar',
+				'length' => 64,
+				'not null' => FALSE,
+			),
+			'georeference_sources' => array(
+				'description' => 'A list (concatenated and separated) of maps, gazetteers, or other resources used to georeference the Location, described specifically enough to allow anyone in the future to use the same resources. see also http://rs.tdwg.org/dwc/terms/index.htm#georeferenceSources',
+				'type' => 'varchar',
+				'length' => 64,
+				'not null' => FALSE,
+			),
+			'georeference_verification_status' => array(
+				'description' => 'A categorical description of the extent to which the georeference has been verified to represent the best possible spatial description. Recommended best practice is to use a controlled vocabulary. see also http://rs.tdwg.org/dwc/terms/index.htm#georeferenceVerificationStatus',
+				'type' => 'varchar',
+				'length' => 64,
+				'not null' => FALSE,
+			),
+			'georeference_remarks' => array(
+				'description' => 'Notes or comments about the spatial description determination, explaining assumptions made in addition or opposition to the those formalized in the method referred to in georeferenceProtocol. see also http://rs.tdwg.org/dwc/terms/index.htm#georeferenceRemarks',
+				'type' => 'varchar',
+				'length' => 64,
+				'not null' => FALSE,
+			),
+			'occurrence_id' => array(
+				'description' => 'An identifier for the Occurrence (as opposed to a particular digital record of the occurrence). In the absence of a persistent global unique identifier, construct one from a combination of identifiers in the record that will most closely make the occurrenceID globally unique. see also http://rs.tdwg.org/dwc/terms/index.htm#occurrenceID',
+				'type' => 'varchar',
+				'length' => 32,
+				'not null' => FALSE,
+			),		
+			'catalog_number' => array(
+				'description' => '',
+				'type' => 'varchar',
+				'length' => 32,
+				'not null' => FALSE,
+			),				
+			'occurrence_remarks' => array(
+				'description' => 'Comments or notes about the Occurrence. see also http://rs.tdwg.org/dwc/terms/index.htm#occurrenceRemarks',
+				'type' => 'varchar',
+				'length' => 64,
+				'not null' => FALSE,
+			),		
+			'record_number' => array(
+				'description' => 'An identifier given to the Occurrence at the time it was recorded. Often serves as a link between field notes and an Occurrence record, such as a specimen collectors number. see also http://rs.tdwg.org/dwc/terms/index.htm#recordNumber',
+				'type' => 'varchar',
+				'length' => 32,
+				'not null' => FALSE,
+			),		
+			'recorded_by' => array(
+				'description' => 'A list (concatenated and separated) of names of people, groups, or organizations responsible for recording the original Occurrence. The primary collector or observer, especially one who applies a personal identifier (recordNumber), should be listed first. see also http://rs.tdwg.org/dwc/terms/index.htm#recordedBy',
+				'type' => 'varchar',
+				'length' => 32,
+				'not null' => FALSE,
+			),		
+			'individual_id' => array(
+				'description' => 'An identifier for an individual or named group of individual organisms represented in the Occurrence. Meant to accommodate resampling of the same individual or group for monitoring purposes. May be a global unique identifier or an identifier specific to a data set. see also http://rs.tdwg.org/dwc/terms/index.htm#individualID',
+				'type' => 'varchar',
+				'length' => 32,
+				'not null' => FALSE,
+			),
+			'individual_count' => array(
+				'description' => 'The number of individuals represented present at the time of the Occurrence. see also http://rs.tdwg.org/dwc/terms/index.htm#individualCount',
+				'type' => 'varchar',
+				'length' => 32,
+				'not null' => FALSE,
+			),
+			'sex' => array(
+				'description' => 'The sex of the biological individual(s) represented in the Occurrence. Recommended best practice is to use a controlled vocabulary. see also http://rs.tdwg.org/dwc/terms/index.htm#sex',
+				'type' => 'varchar',
+				'length' => 32,
+				'not null' => FALSE,
+			),
+			'life_stage' => array(
+				'description' => 'The age class or life stage of the biological individual(s) at the time the Occurrence was recorded. Recommended best practice is to use a controlled vocabulary. see also http://rs.tdwg.org/dwc/terms/index.htm#lifeStage',
+				'type' => 'varchar',
+				'length' => 32,
+				'not null' => FALSE,
+			),
+			'reproductive_condition' => array(
+				'description' => 'The reproductive condition of the biological individual(s) represented in the Occurrence. Recommended best practice is to use a controlled vocabulary. see also http://rs.tdwg.org/dwc/terms/index.htm#reproductiveCondition',
+				'type' => 'varchar',
+				'length' => 32,
+				'not null' => FALSE,
+			),
+			'behavior' => array(
+				'description' => 'A description of the behavior shown by the subject at the time the Occurrence was recorded. Recommended best practice is to use a controlled vocabulary. see also http://rs.tdwg.org/dwc/terms/index.htm#behavior',
+				'type' => 'varchar',
+				'length' => 32,
+				'not null' => FALSE,
+			),
+			'establishment_means' => array(
+				'description' => 'The process by which the biological individual(s) represented in the Occurrence became established at the location. Recommended best practice is to use a controlled vocabulary. see also http://rs.tdwg.org/dwc/terms/index.htm#establishmentMeans',
+				'type' => 'varchar',
+				'length' => 32,
+				'not null' => FALSE,
+			),
+			'occurrence_status' => array(
+				'description' => 'A statement about the presence or absence of a Taxon at a Location. Recommended best practice is to use a controlled vocabulary. see also http://rs.tdwg.org/dwc/terms/index.htm#occurrenceStatus',
+				'type' => 'varchar',
+				'length' => 32,
+				'not null' => FALSE,
+			),
+			'preparations' => array(
+				'description' => 'A list (concatenated and separated) of preparations and preservation methods for a specimen. see also http://rs.tdwg.org/dwc/terms/index.htm#preparations',
+				'type' => 'varchar',
+				'length' => 32,
+				'not null' => FALSE,
+			),
+			'disposition' => array(
+				'description' => 'The current state of a specimen with respect to the collection identified in collectionCode or collectionID. Recommended best practice is to use a controlled vocabulary. see also http://rs.tdwg.org/dwc/terms/index.htm#disposition',
+				'type' => 'varchar',
+				'length' => 32,
+				'not null' => FALSE,
+			),
+			'other_catalog_numbers' => array(
+				'description' => 'A list (concatenated and separated) of previous or alternate fully qualified catalog numbers or other human-used identifiers for the same Occurrence, whether in the current or any other data set or collection. see also http://rs.tdwg.org/dwc/terms/index.htm#otherCatalogNumbers',
+				'type' => 'varchar',
+				'length' => 32,
+				'not null' => FALSE,
+			),
+			'previous_identifications' => array(
+				'description' => 'A list (concatenated and separated) of previous assignments of names to the Occurrence. see also http://rs.tdwg.org/dwc/terms/index.htm#previousIdentifications',
+				'type' => 'varchar',
+				'length' => 32,
+				'not null' => FALSE,
+			),
+			'associated_media' => array(
+				'description' => 'A list (concatenated and separated) of identifiers (publication, global unique identifier, URI) of media associated with the Occurrence. see also http://rs.tdwg.org/dwc/terms/index.htm#associatedMedia',
+				'type' => 'varchar',
+				'length' => 32,
+				'not null' => FALSE,
+			),
+			'associated_references' => array(
+				'description' => 'A list (concatenated and separated) of identifiers (publication, bibliographic reference, global unique identifier, URI) of literature associated with the Occurrence. see also http://rs.tdwg.org/dwc/terms/index.htm#associatedReferences',
+				'type' => 'varchar',
+				'length' => 32,
+				'not null' => FALSE,
+			),
+			'associated_occurrences' => array(
+				'description' => 'A list (concatenated and separated) of identifiers of other Occurrence records and their associations to this Occurrence. see also http://rs.tdwg.org/dwc/terms/index.htm#associatedOccurrences',
+				'type' => 'varchar',
+				'length' => 32,
+				'not null' => FALSE,
+			),
+			'associated_sequences' => array(
+				'description' => 'A list (concatenated and separated) of identifiers (publication, global unique identifier, URI) of genetic sequence information associated with the Occurrence. see also http://rs.tdwg.org/dwc/terms/index.htm#associatedSequences',
+				'type' => 'varchar',
+				'length' => 32,
+				'not null' => FALSE,
+			),			
+			'associated_taxa' => array(
+				'description' => 'A list (concatenated and separated) of identifiers or names of taxa and their associations with the Occurrence. see also http://rs.tdwg.org/dwc/terms/index.htm#associatedTaxa',
+				'type' => 'varchar',
+				'length' => 32,
+				'not null' => FALSE,
+			),
+			'occurrence_details' => array(
+				'description' => 'This term is deprecated in favor over the new dcterm:references. Previously this term was used as: A reference (publication, URI) to the most detailed information available about the Occurrence. see also http://rs.tdwg.org/dwc/terms/index.htm#occurrenceDetails',
+				'type' => 'varchar',
+				'length' => 32,
+				'not null' => FALSE,
+			),				
+			'type' => array(
+				'description' => 'The nature or genre of the resource. For Darwin Core, recommended best practice is to use the name of the class that defines the root of the record. see also http://rs.tdwg.org/dwc/terms/index.htm#dcterms:type',
+				'type' => 'varchar',
+				'length' => 32,
+				'not null' => FALSE,
+			),
+			'modified' => array(
+				'description' => 'The most recent date-time on which the resource was changed. For Darwin Core, recommended best practice is to use an encoding scheme, such as ISO 8601:2004(E) see also http://rs.tdwg.org/dwc/terms/index.htm#dcterms:modified',
+				'type' => 'varchar',
+				'length' => 32,
+				'not null' => FALSE,
+			),
+			'language' => array(
+				'description' => 'A language of the resource. Recommended best practice is to use a controlled vocabulary such as RFC 4646 [RFC4646] see also http://rs.tdwg.org/dwc/terms/index.htm#dcterms:language',
+				'type' => 'varchar',
+				'length' => 32,
+				'not null' => FALSE,
+			),
+			'rights' => array(
+				'description' => 'Information about rights held in and over the resource. Typically, rights information includes a statement about various property rights associated with the resource, including intellectual property rights see also http://rs.tdwg.org/dwc/terms/index.htm#dcterms:rights',
+				'type' => 'varchar',
+				'length' => 32,
+				'not null' => FALSE,
+			),
+			'rights_holder' => array(
+				'description' => 'A person or organization owning or managing rights over the resource see also http://rs.tdwg.org/dwc/terms/index.htm#dcterms:rightsHolder',
+				'type' => 'varchar',
+				'length' => 32,
+				'not null' => FALSE,
+			),
+			'access_rights' => array(
+				'description' => 'Information about who can access the resource or an indication of its security status. Access Rights may include information regarding access or restrictions based on privacy, security, or other policies see also http://rs.tdwg.org/dwc/terms/index.htm#dcterms:accessRights',
+				'type' => 'varchar',
+				'length' => 32,
+				'not null' => FALSE,
+			),
+			'bibliographic_citation' => array(
+				'description' => 'A bibliographic reference for the resource as a statement indicating how this record should be cited (attributed) when used. Recommended practice is to include sufficient bibliographic detail to identify the resource as unambiguously as possible see also http://rs.tdwg.org/dwc/terms/index.htm#dcterms:bibliographicCitation',
+				'type' => 'varchar',
+				'length' => 32,
+				'not null' => FALSE,
+			),
+			'references' => array(
+				'description' => 'A URL to a related resource that is referenced, cited, or otherwise pointed to by the described resource. Often another webpage showing the same, but richer resource see also http://rs.tdwg.org/dwc/terms/index.htm#dcterms:references',
+				'type' => 'varchar',
+				'length' => 32,
+				'not null' => FALSE,
+			),																																																											
+			'institution_id' => array(
+				'description' => 'An identifier for the institution having custody of the object(s) or information referred to in the record. see also http://rs.tdwg.org/dwc/terms/index.htm#institutionID',
+				'type' => 'varchar',
+				'length' => 32,
+				'not null' => FALSE,
+			),		
+			'collection_id' => array(
+				'description' => 'An identifier for the collection or dataset from which the record was derived. For physical specimens, the recommended best practice is to use the identifier in a collections registry such as the Biodiversity Collections Index (http://www.biodiversitycollectionsindex.org/). see also http://rs.tdwg.org/dwc/terms/index.htm#collectionID',
+				'type' => 'varchar',
+				'length' => 32,
+				'not null' => FALSE,
+			),				
+			'dataset_id' => array(
+				'description' => 'An identifier for the set of data. May be a global unique identifier or an identifier specific to a collection or institution. see also http://rs.tdwg.org/dwc/terms/index.htm#datasetID',
+				'type' => 'varchar',
+				'length' => 32,
+				'not null' => FALSE,
+			),
+			'institution_code' => array(
+				'description' => 'The name (or acronym) in use by the institution having custody of the object(s) or information referred to in the record. see also http://rs.tdwg.org/dwc/terms/index.htm#institutionCode',
+				'type' => 'varchar',
+				'length' => 256,
+				'not null' => FALSE,
+			),
+			'collection_code' => array(
+				'description' => 'The name, acronym, coden, or initialism identifying the collection or data set from which the record was derived. see also http://rs.tdwg.org/dwc/terms/index.htm#collectionCode',
+				'type' => 'varchar',
+				'length' => 256,
+				'not null' => FALSE,
+			),		
+			'dataset_name' => array(
+				'description' => 'The name identifying the data set from which the record was derived. see also http://rs.tdwg.org/dwc/terms/index.htm#datasetName',
+				'type' => 'varchar',
+				'length' => 32,
+				'not null' => FALSE,
+			),	
+			'owner_institution_code' => array(
+				'description' => 'The name (or acronym) in use by the institution having ownership of the object(s) or information referred to in the record. see also http://rs.tdwg.org/dwc/terms/index.htm#ownerInstitutionCode',
+				'type' => 'varchar',
+				'length' => 32,
+				'not null' => FALSE,
+			),		
+			'basis_of_record' => array(
+				'description' => 'The specific nature of the data record - a subtype of the dcterms:type. Recommended best practice is to use a controlled vocabulary such as the Darwin Core Type Vocabulary (http://rs.tdwg.org/dwc/terms/type-vocabulary/index.htm). see also http://rs.tdwg.org/dwc/terms/index.htm#basisOfRecord',
+				'type' => 'varchar',
+				'length' => 32,
+				'not null' => FALSE,
+			),
+			'information_withheld' => array(
+				'description' => 'Additional information that exists, but that has not been shared in the given record. see also http://rs.tdwg.org/dwc/terms/index.htm#informationWithheld',
+				'type' => 'varchar',
+				'length' => 32,
+				'not null' => FALSE,
+			),
+			'data_generalizations' => array(
+				'description' => 'Actions taken to make the shared data less specific or complete than in its original form. Suggests that alternative data of higher quality may be available on request. see also http://rs.tdwg.org/dwc/terms/index.htm#dataGeneralizations',
+				'type' => 'varchar',
+				'length' => 32,
+				'not null' => FALSE,
+			),
+			'dynamic_properties' => array(
+				'description' => 'A list (concatenated and separated) of additional measurements, facts, characteristics, or assertions about the record. Meant to provide a mechanism for structured content such as key-value pairs. see also http://rs.tdwg.org/dwc/terms/index.htm#dynamicProperties',
+				'type' => 'varchar',
+				'length' => 32,
+				'not null' => FALSE,
+			),
+			'source' => array(
+				'description' => 'Deprecated in favor over dcterm:references! A URI link to the source of this record. A link to a webpage or RESTful webservice is recommended. URI is mandatory format.',
+				'type' => 'varchar',
+				'length' => 32,
+				'not null' => FALSE,
+			),
+			'taxon_id' => array(
+				'description' => 'An identifier for the set of taxon information (data associated with the Taxon class). May be a global unique identifier or an identifier specific to the data set. see also http://rs.tdwg.org/dwc/terms/index.htm#taxonID',
+				'type' => 'varchar',
+				'length' => 32,
+				'not null' => FALSE,
+			),			
+			'scientific_name_id' => array(
+				'description' => 'An identifier for the nomenclatural (not taxonomic) details of a scientific name. see also http://rs.tdwg.org/dwc/terms/index.htm#scientificNameID',
+				'type' => 'varchar',
+				'length' => 32,
+				'not null' => FALSE,
+			),		
+			'accepted_name_usage_id' => array(
+				'description' => 'An identifier for the name usage (documented meaning of the name according to a source) of the currently valid (zoological) or accepted (botanical) taxon. see also http://rs.tdwg.org/dwc/terms/index.htm#acceptedNameUsageID',
+				'type' => 'varchar',
+				'length' => 32,
+				'not null' => FALSE,
+			),
+			'parent_name_usage_id' => array(
+				'description' => 'An identifier for the name usage (documented meaning of the name according to a source) of the direct, most proximate higher-rank parent taxon (in a classification) of the most specific element of the scientificName. see also http://rs.tdwg.org/dwc/terms/index.htm#parentNameUsageID',
+				'type' => 'varchar',
+				'length' => 32,
+				'not null' => FALSE,
+			),
+			'original_name_usage_id' => array(
+				'description' => 'An identifier for the name usage (documented meaning of the name according to a source) in which the terminal element of the scientificName was originally established under the rules of the associated nomenclaturalCode. see also http://rs.tdwg.org/dwc/terms/index.htm#originalNameUsageID',
+				'type' => 'varchar',
+				'length' => 32,
+				'not null' => FALSE,
+			),		
+			'name_according_to_id' => array(
+				'description' => 'An identifier for the source in which the specific taxon concept circumscription is defined or implied. See nameAccordingTo. see also http://rs.tdwg.org/dwc/terms/index.htm#nameAccordingToID',
+				'type' => 'varchar',
+				'length' => 32,
+				'not null' => FALSE,
+			),
+			'name_published_in_id' => array(
+				'description' => 'An identifier for the publication in which the scientificName was originally established under the rules of the associated nomenclaturalCode. see also http://rs.tdwg.org/dwc/terms/index.htm#namePublishedInID',
+				'type' => 'varchar',
+				'length' => 32,
+				'not null' => FALSE,
+			),
+			'taxon_concept_id' => array(
+				'description' => 'An identifier for the taxonomic concept to which the record refers - not for the nomenclatural details of a taxon. see also http://rs.tdwg.org/dwc/terms/index.htm#taxonConceptID',
+				'type' => 'varchar',
+				'length' => 32,
+				'not null' => FALSE,
+			),
+			'accepted_name_usage' => array(
+				'description' => 'The full name, with authorship and date information if known, of the currently valid (zoological) or accepted (botanical) taxon. see also http://rs.tdwg.org/dwc/terms/index.htm#acceptedNameUsage',
+				'type' => 'varchar',
+				'length' => 32,
+				'not null' => FALSE,
+			),
+			'parent_name_usage' => array(
+				'description' => 'The full name, with authorship and date information if known, of the direct, most proximate higher-rank parent taxon (in a classification) of the most specific element of the scientificName. see also http://rs.tdwg.org/dwc/terms/index.htm#parentNameUsage',
+				'type' => 'varchar',
+				'length' => 32,
+				'not null' => FALSE,
+			),
+			'original_name_usage' => array(
+				'description' => 'The taxon name, with authorship and date information if known, as it originally appeared when first established under the rules of the associated nomenclaturalCode. The basionym (botany) or basonym (bacteriology) of the scientificName or the senior/earlier homonym for replaced names. see also http://rs.tdwg.org/dwc/terms/index.htm#originalNameUsage',
+				'type' => 'varchar',
+				'length' => 32,
+				'not null' => FALSE,
+			),
+			'name_according_to' => array(
+				'description' => 'The reference to the source in which the specific taxon concept circumscription is defined or implied - traditionally signified by the Latin "sensu" or "sec." (from secundum, meaning "according to"). For taxa that result from identifications, a reference to the keys, monographs, experts and other sources should be given. see also http://rs.tdwg.org/dwc/terms/index.htm#nameAccordingTo',
+				'type' => 'varchar',
+				'length' => 32,
+				'not null' => FALSE,
+			),
+			'name_published_in' => array(
+				'description' => 'A reference for the publication in which the scientificName was originally established under the rules of the associated nomenclaturalCode. see also http://rs.tdwg.org/dwc/terms/index.htm#namePublishedIn',
+				'type' => 'varchar',
+				'length' => 32,
+				'not null' => FALSE,
+			),		
+			'name_published_in_year' => array(
+				'description' => 'The four-digit year in which the scientificName was published. see also http://rs.tdwg.org/dwc/terms/index.htm#namePublishedInYear',
+				'type' => 'varchar',
+				'length' => 32,
+				'not null' => FALSE,
+			),
+			'higher_classification' => array(
+				'description' => 'A list (concatenated and separated) of taxa names terminating at the rank immediately superior to the taxon referenced in the taxon record. Recommended best practice is to order the list starting with the highest rank and separating the names for each rank with a semi-colon (";"). see also http://rs.tdwg.org/dwc/terms/index.htm#higherClassification',
+				'type' => 'varchar',
+				'length' => 32,
+				'not null' => FALSE,
+			),
+			'kingdom' => array(
+				'description' => 'The full scientific name of the kingdom in which the taxon is classified. see also http://rs.tdwg.org/dwc/terms/index.htm#kingdom',
+				'type' => 'varchar',
+				'length' => 32,
+				'not null' => FALSE,
+			),
+			'phylum' => array(
+				'description' => 'The full scientific name of the phylum or division in which the taxon is classified. see also http://rs.tdwg.org/dwc/terms/index.htm#phylum',
+				'type' => 'varchar',
+				'length' => 32,
+				'not null' => FALSE,
+			),
+			'class' => array(
+				'description' => 'The full scientific name of the class in which the taxon is classified. see also http://rs.tdwg.org/dwc/terms/index.htm#class',
+				'type' => 'varchar',
+				'length' => 32,
+				'not null' => FALSE,
+			),
+			'order' => array(
+				'description' => 'The full scientific name of the order in which the taxon is classified. see also http://rs.tdwg.org/dwc/terms/index.htm#order',
+				'type' => 'varchar',
+				'length' => 32,
+				'not null' => FALSE,
+			),
+			'family' => array(
+				'description' => 'The full scientific name of the family in which the taxon is classified. see also http://rs.tdwg.org/dwc/terms/index.htm#family',
+				'type' => 'varchar',
+				'length' => 32,
+				'not null' => FALSE,
+			),
+			'genus' => array(
+				'description' => 'The full scientific name of the genus in which the taxon is classified. see also http://rs.tdwg.org/dwc/terms/index.htm#genus',
+				'type' => 'varchar',
+				'length' => 32,
+				'not null' => FALSE,
+			),		
+			'subgenus' => array(
+				'description' => 'The full scientific name of the subgenus in which the taxon is classified. Values should include the genus to avoid homonym confusion. see also http://rs.tdwg.org/dwc/terms/index.htm#subgenus',
+				'type' => 'varchar',
+				'length' => 32,
+				'not null' => FALSE,
+			),	
+			'specific_epithet' => array(
+				'description' => 'The name of the first or species epithet of the scientificName. see also http://rs.tdwg.org/dwc/terms/index.htm#specificEpithet',
+				'type' => 'varchar',
+				'length' => 32,
+				'not null' => FALSE,
+			),			
+			'infraspecific_epithet' => array(
+				'description' => 'The name of the lowest or terminal infraspecific epithet of the scientificName, excluding any rank designation. see also http://rs.tdwg.org/dwc/terms/index.htm#infraspecificEpithet',
+				'type' => 'varchar',
+				'length' => 32,
+				'not null' => FALSE,
+			),						
+			'taxon_rank' => array(
+				'description' => 'The taxonomic rank of the most specific name in the scientificName. Recommended best practice is to use a controlled vocabulary. see also http://rs.tdwg.org/dwc/terms/index.htm#taxonRank',
+				'type' => 'varchar',
+				'length' => 32,
+				'not null' => FALSE,
+			),
+			'verbatim_taxon_rank' => array(
+				'description' => 'The taxonomic rank of the most specific name in the scientificName as it appears in the original record. see also http://rs.tdwg.org/dwc/terms/index.htm#verbatimTaxonRank',
+				'type' => 'varchar',
+				'length' => 32,
+				'not null' => FALSE,
+			),
+			'scientific_name_authorship' => array(
+				'description' => 'The authorship information for the scientificName formatted according to the conventions of the applicable nomenclaturalCode. see also http://rs.tdwg.org/dwc/terms/index.htm#scientificNameAuthorship',
+				'type' => 'varchar',
+				'length' => 32,
+				'not null' => FALSE,
+			),
+			'vernacular_name' => array(
+				'description' => 'A common or vernacular name. see also http://rs.tdwg.org/dwc/terms/index.htm#vernacularName',
+				'type' => 'varchar',
+				'length' => 32,
+				'not null' => FALSE,
+			),
+			'nomenclatural_code' => array(
+				'description' => 'The nomenclatural code (or codes in the case of an ambiregnal name) under which the scientificName is constructed. Recommended best practice is to use a controlled vocabulary. see also http://rs.tdwg.org/dwc/terms/index.htm#nomenclaturalCode',
+				'type' => 'varchar',
+				'length' => 32,
+				'not null' => FALSE,
+			),
+			'taxonomic_status' => array(
+				'description' => 'The status of the use of the scientificName as a label for a taxon. Requires taxonomic opinion to define the scope of a taxon. Rules of priority then are used to define the taxonomic status of the nomenclature contained in that scope, combined with the experts opinion. It must be linked to a specific taxonomic reference that defines the concept. Recommended best practice is to use a controlled vocabulary. see also http://rs.tdwg.org/dwc/terms/index.htm#taxonomicStatus',
+				'type' => 'varchar',
+				'length' => 32,
+				'not null' => FALSE,
+			),
+			'nomenclatural_status' => array(
+				'description' => 'The status related to the original publication of the name and its conformance to the relevant rules of nomenclature. It is based essentially on an algorithm according to the business rules of the code. It requires no taxonomic opinion. see also http://rs.tdwg.org/dwc/terms/index.htm#nomenclaturalStatus',
+				'type' => 'varchar',
+				'length' => 32,
+				'not null' => FALSE,
+			),
+			'taxon_remarks' => array(
+				'description' => 'Comments or notes about the taxon or name. see also http://rs.tdwg.org/dwc/terms/index.htm#taxonRemarks',
+				'type' => 'varchar',
+				'length' => 32,
+				'not null' => FALSE,
+			),
+		),
+		'primary key' => array('nid'),
+	);
+	return $schema;
+}
+
+
+
+/**
+ * Implements hook_install()
+ *
+ * To set the following variables:
+ *    - node_submitted_pliniancore: not sure :S FIXME
+ *    - species_page_pliniancore_tab: to indicate in which page of the species
+ *        overview y going to be displayed.
+ *    - species_page_display_pliniancore: to show the records in its own page
+ *        on the principal menu.
+ *
+ */
+function darwincore_install() {
+	variable_set('node_submitted_darwincore', 1);
+	variable_set('species_page_pliniancore_tab', 'descriptions');
+	variable_set('species_page_display_pliniancore', 0);
+}
+
+
+/**
+ * Implements hook_uninstall()
+ *
+ * To delete the darwincore records, the schema and the variables
+ *
+ * (if the variables are not deleted can become a debugging nightmare,
+ *  trust me on this one).
+ */
+function darwincore_uninstall() {
+
+	// Gather all the example content that might have been created while this
+	// module was enabled.  Simple selects still use db_query().
+	// http://api.drupal.org/api/function/db_query/7
+	$sql = 'SELECT nid FROM {node} n WHERE n.type = :type';
+	$result = db_query($sql, array(':type' => 'darwincore'));
+	$nids = array();
+	foreach ($result as $row) {
+		$nids[] = $row->nid;
+	}
+	// Delete all the nodes at once
+	// http://api.drupal.org/api/function/node_delete_multiple/7
+	node_delete_multiple($nids);
+	// Delete our content type
+	// http://api.drupal.org/api/function/node_type_delete/7
+	node_type_delete('darwincore');
+
+	db_drop_table('darwincore');
+
+	// Delete all the installed variables
+	variable_del('node_submitted_darwincore');
+	variable_del('species_page_pliniancore_tab');
+	variable_del('species_page_display_pliniancore');
+}
+
+

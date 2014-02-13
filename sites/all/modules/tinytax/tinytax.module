@@ -1,0 +1,241 @@
+<?php
+define('TINYTAX_MAX_TERMS_ANCESTORS_NUM', 500);
+
+/**
+ * @file
+ * 
+ * Description of the tinytax.module file.
+ */
+/**
+ * Implementation of hook_theme().
+ */
+function tinytax_theme(){
+  return array(
+    'tinytax_block' => array(
+      'variables' => array(
+        'open_tids' => array(),
+        'vid' => FALSE,
+        'ancestors' => FALSE
+      ),
+      'file' => 'tinytax.theme.inc'
+    ),
+    'tinytax_branch' => array(
+      'variables' => array(
+        'term_theme_function' => 'tinytax_term',
+        'open_tids' => array(),
+        'ancestors' => FALSE,
+        'tid' => 0,
+        'vid' => FALSE,
+        'toggle' => FALSE
+      ),
+      'file' => 'tinytax.theme.inc'
+    ),
+    'tinytax_term' => array(
+      'variables' => array(
+        'term' => FALSE,
+        'ancestors' => FALSE,
+        'open_tids' => array(),
+        'toggle' => FALSE
+      ),
+      'file' => 'tinytax.theme.inc'
+    ),
+    'tinytax_term_count' => array(
+      'variables' => array(
+        'count' => FALSE
+      ),
+      'file' => 'tinytax.theme.inc'
+    )
+  );
+}
+
+/**
+ * Callback to return a sub-branch.
+ */
+function tinytax_js($term){
+  // Check the total number of terms in this taxonomy.  If too many, and we're
+  // set to display ancestors, then disable the display of ancestors.
+  $ancestors = variable_get('tinytax_ancestors_' . $term->vid, 0);
+  if($ancestors){
+    $row = db_query('SELECT COUNT(*) AS num_terms FROM {taxonomy_term_data} WHERE vid = :vid', array(
+      ':vid' => $term->vid
+    ))->fetch();
+    if($row->num_terms > TINYTAX_MAX_TERMS_ANCESTORS_NUM){
+      $ancestors = 0;
+    }
+  }
+  return theme('tinytax_branch', array(
+    'tid' => $term->tid,
+    'vid' => $term->vid,
+    'ancestors' => $ancestors,
+    'toggle' => variable_get('tinytax_hidden_field_and_value_' . $term->vid, FALSE)
+  ));
+}
+
+/**
+ * Implementation of hook_menu().
+ */
+function tinytax_menu(){
+  return array(
+    'tinytax/get/%taxonomy_term' => array(
+      'title' => 'Tinytax',
+      'title callback' => FALSE, // JSON callback, title not required.
+      'page callback' => 'tinytax_js',
+      'page arguments' => array(
+        2
+      ),
+      'delivery callback' => 'ajax_deliver',
+      'access arguments' => array(
+        'access content' // FIXME - Should this be a little more inteligent?
+      ),
+      'type' => MENU_CALLBACK
+    )
+  );
+}
+
+/**
+ * hook_block_view().
+ */
+function tinytax_block_view($delta = ''){
+  // The delta should be set as the vid, we simply need to return the themed
+  // branch with tid 0.
+  $block = array();
+  $vocabulary = taxonomy_vocabulary_load($delta);
+  $open_tids = array();
+  $matches = array();
+  preg_match('/taxonomy\/term\/([0-9]+)/', $_GET['q'], $matches);
+  if(($term = menu_get_object('taxonomy_term', 2)) || (count($matches) == 2 && $term = taxonomy_term_load(arg(2)))){
+    $parents_all = taxonomy_get_parents_all($term->tid);
+    array_shift($parents_all);
+    foreach($parents_all as $parent){
+      $open_tids[] = $parent->tid;
+    }
+  }
+  if($vocabulary){
+    $block['subject'] = check_plain($vocabulary->name);
+    $block['content'] = array(
+      '#theme' => 'tinytax_block',
+      '#vid' => $delta,
+      '#open_tids' => $open_tids,
+      '#ancestors' => variable_get('tinytax_ancestors_' . $vocabulary->vid, 0),
+      '#attached' => array(
+        'css' => array(
+          drupal_get_path('module', 'tinytax') . '/css/tinytax.css'
+        ),
+        'js' => array(
+          drupal_get_path('module', 'tinytax') . '/js/tinytax.js',
+          array(
+            'data' => array(
+              'tinytax' => array(
+                'callback' => url('tinytax/get'),
+                'minus' => file_create_url(drupal_get_path('module', 'tinytax') . '/images/minus.gif'),
+                'load' => file_create_url(drupal_get_path('module', 'tinytax') . '/images/load.gif'),
+                'plus' => file_create_url(drupal_get_path('module', 'tinytax') . '/images/plus.gif')
+              )
+            ),
+            'type' => 'setting'
+          )
+        )
+      )
+    );
+  }
+  return $block;
+}
+
+/**
+ * Implements hook_block_configure().
+ */
+function tinytax_block_configure($delta = ''){
+  $form = array(
+    'tinytax_ancestors' => array(
+      '#type' => 'checkbox',
+      '#title' => t('Tick to show the total number of descendants of each term.'),
+      '#default_value' => variable_get('tinytax_ancestors_' . $delta, 0)
+    )
+  );
+  // We get a list of all the fields that are attached to this bundle.
+  $vocabulary = taxonomy_vocabulary_load($delta);
+  $fields = field_info_fields();
+  $options = array();
+  $form['hide_terms'] = array(
+    '#type' => 'fieldset',
+    '#title' => t('Toggle visibility of terms')
+  );
+  $default_value = variable_get('tinytax_hidden_field_and_value_' . $delta, array());
+  foreach($fields as $field_name => $field){
+    if(isset($field['bundles']['taxonomy_term']) && in_array($vocabulary->machine_name, $field['bundles']['taxonomy_term'])){
+      if($field['type'] == 'list_text'){
+        $keep_hide_terms = TRUE;
+        $instance = field_info_instance('taxonomy_term', $field_name, $vocabulary->machine_name);
+        $options[$field_name] = $instance['label'];
+        $form['hide_terms']['allowed_values_' . $field_name] = array(
+          '#type' => 'select',
+          '#title' => t('Values to hide'),
+          '#default_value' => isset($default_value[$field_name]) ? $default_value[$field_name] : '',
+          '#options' => list_allowed_values($field, $instance, 'taxonomy_term'),
+          '#multiple' => TRUE,
+          '#states' => array(
+            'visible' => array(
+              ':input[name="hide_terms_field"]' => array(
+                'value' => $field_name
+              )
+            )
+          )
+        );
+      }
+    }
+  }
+  if(count($options)){
+    $form['hide_terms']['hide_terms_field'] = array(
+      '#type' => 'select',
+      '#title' => t('Field to match against'),
+      '#default_value' => array_pop(array_keys($default_value)),
+      '#options' => $options,
+      '#weight' => -100,
+      '#empty_value' => 0
+    );
+  }else{
+    unset($form['hide_terms']);
+  }
+  return $form;
+}
+
+/**
+ * Implements hook_block_save().
+ */
+function tinytax_block_save($delta = '', $edit = array()){
+  if(isset($edit['hide_terms_field'])){
+    if($edit['hide_terms_field']){
+      variable_set('tinytax_hidden_field_and_value_' . $delta, array(
+        $edit['hide_terms_field'] => $edit['allowed_values_' . $edit['hide_terms_field']]
+      ));
+    }else{
+      variable_del('tinytax_hidden_field_and_value_' . $delta);
+    }
+  }
+  variable_set('tinytax_ancestors_' . $delta, $edit['tinytax_ancestors']);
+}
+
+/**
+ * hook_block_info().
+ */
+function tinytax_block_info(){
+  $vocabularies = taxonomy_vocabulary_load_multiple(FALSE);
+  $blocks = array();
+  foreach($vocabularies as $vocabulary){
+    $blocks[$vocabulary->vid] = array(
+      'info' => t('Tinytax block for "@vocabulary_name"', array(
+        '@vocabulary_name' => $vocabulary->name
+      )),
+      'cache' => DRUPAL_CACHE_PER_PAGE | DRUPAL_CACHE_PER_ROLE
+    );
+  }
+  return $blocks;
+}
+
+/**
+ * hook_taxonomy_vocabulary_delete($vocabulary)
+ */
+function tinytax_taxonomy_vocabulary_delete($vocabulary){
+  db_delete('block')->condition('module', 'tinytax')->condition('delta', $vocabulary->vid)->execute();
+  variable_del('tinytax_ancestors_' . $vocabulary->vid);
+}
